@@ -28,50 +28,29 @@ To read more about using these font, please visit the Next.js documentation:
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { deleteProduct } from "@/app/actions"
 export function ProductsTable(products) {
-  const handleDelete = (id) => {
-    console.log(id)
-    deleteProduct(id)
-  }
-  // const [products, setProducts] = useState([
-  //   {
-  //     id: 1,
-  //     name: "Gamer Gear Pro Controller",
-  //     description: "High-performance gaming controller",
-  //     price: 59.99,
-  //     stock: 100,
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Luminous VR Headset",
-  //     description: "Immersive virtual reality experience",
-  //     price: 199.99,
-  //     stock: 50,
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Aqua Filters",
-  //     description: "Advanced water filtration system",
-  //     price: 29.99,
-  //     stock: 75,
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Eco Planters",
-  //     description: "Sustainable indoor gardening",
-  //     price: 39.99,
-  //     stock: 25,
-  //   },
-  //   {
-  //     id: 5,
-  //     name: "Zest Juicers",
-  //     description: "Powerful juicing machine",
-  //     price: 99.99,
-  //     stock: 150,
-  //   },
-  // ])
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch('/api/products', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id }),
+      });
+  
+      if (response.ok) {
+        console.log('Product deleted');
+      } else {
+        console.error('Failed to delete the product');
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
+  };
+  
   console.log(products)
   const [sortColumn, setSortColumn] = useState("name")
   const [sortDirection, setSortDirection] = useState("asc")
@@ -113,9 +92,9 @@ export function ProductsTable(products) {
             onChange={handleFilter}
             className="bg-background px-4 py-2 rounded-md shadow-sm"
           />
-          <Button size="sm" variant="outline">
+          <Link href="/dashboard/AddNew">
             Add Product
-          </Button>
+          </Link>
         </div>
       </header>
       <div className="flex-1 overflow-auto p-4">
@@ -155,10 +134,12 @@ export function ProductsTable(products) {
           <TableBody>
             {sortedProducts.map((product) => (
               <TableRow key={product.id}>
-                <TableCell className="font-medium">{product.img}</TableCell>
+                <TableCell className="font-medium">
+                  <img src={product.picture1} alt="" />
+                  </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell>{product.description}</TableCell>
-                <TableCell>${product.price.toFixed(2)}</TableCell>
+                <TableCell>{product.price.toFixed(2)} DA</TableCell>
                 <TableCell>{product.stock}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">

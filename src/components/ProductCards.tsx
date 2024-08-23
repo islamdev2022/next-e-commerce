@@ -1,8 +1,6 @@
-'use client';
 import { ProductCardC } from "./component/product-card-c";
 import { ProductDescription } from "./component/product-description";
 import { Checkout } from "./component/checkout";
-import {FAKE_PRODUCTS} from '../data/fake' 
 import { getProducts } from "@/app/actions";
 
 const ProductCards = async () => {

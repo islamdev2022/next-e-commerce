@@ -30,11 +30,9 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useCart } from "@/context/CartContext";
 
 export function Checkout() {
-  const { cart } = useCart();
-  const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const subtotal = 100
   const shipping = 9.99;
   const tax = subtotal * 0.1;
   const total = subtotal + shipping + tax;
@@ -101,7 +99,7 @@ export function Checkout() {
               <CardTitle>Items in Cart</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {cart.map((item) => (
+              {/* {cart.map((item) => (
                 <div key={item.id} className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">{item.name}</h3>
@@ -112,7 +110,7 @@ export function Checkout() {
                     <p className="text-muted-foreground">${(item.price * item.quantity).toFixed(2)}</p>
                   </div>
                 </div>
-              ))}
+              ))} */}
             </CardContent>
             <Separator />
             <CardContent className="space-y-2">

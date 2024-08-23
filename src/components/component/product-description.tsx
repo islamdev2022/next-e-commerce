@@ -30,19 +30,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Button } from "@/components/ui/button"
 import { JSX, SVGProps } from "react"
 
-interface Product {
-  id: string;
-  img: string;
-  title: string;
-  description: string;
-  price: number;
-}
-
-interface Props {
-  product: Product;
-}
-
-export function ProductDescription ({ product }: Props) {
+export function ProductDescription ({ product }: { product: { id: string, picture1: string, picture2: string, picture3: string ,  title: string, description: string, price: number } }) {
   if (!product) {
     return <div>Product not found</div>;
   }
@@ -54,13 +42,13 @@ export function ProductDescription ({ product }: Props) {
             <CarouselItem>
               <div className="relative group">
                 <img
-                  src={product.img}
+                  src={product.picture1}
                   width={600}
                   height={600}
                   alt="Product Image"
                   className="aspect-square object-cover w-full rounded-lg overflow-hidden group-hover:scale-110 transition-transform"
                 />
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0  flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <ZoomInIcon className="w-10 h-10 text-white" />
                 </div>
               </div>
@@ -68,13 +56,13 @@ export function ProductDescription ({ product }: Props) {
             <CarouselItem>
               <div className="relative group">
                 <img
-                  src={product.img}
+                  src={product.picture2}
                   width={600}
                   height={600}
                   alt="Product Image"
                   className="aspect-square object-cover w-full rounded-lg overflow-hidden group-hover:scale-110 transition-transform"
                 />
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <ZoomInIcon className="w-10 h-10 text-white" />
                 </div>
               </div>
@@ -82,13 +70,13 @@ export function ProductDescription ({ product }: Props) {
             <CarouselItem>
               <div className="relative group">
                 <img
-                  src={product.img}
+                  src={product.picture3}
                   width={600}
                   height={600}
                   alt="Product Image"
                   className="aspect-square object-cover w-full rounded-lg overflow-hidden group-hover:scale-110 transition-transform"
                 />
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <ZoomInIcon className="w-10 h-10 text-white" />
                 </div>
               </div>
