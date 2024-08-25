@@ -8,7 +8,7 @@ const ProductCards = async () => {
   return ( 
   <>
   <div className="flex flex-wrap items-center justify-between px-12 my-10">
-  {(await products).map((product: { id: number; name: string; description: string | null; price: number; stock: number; picture1: string | null; picture2: string | null; picture3: string | null; category: string | null; createdAt: Date; }) => (
+  {(await products).map((product: { id: number; name: string; description: string | null; price: number; stock: number; picture1: string | null; picture2: string | null; picture3: string | null; anime: string | null; createdAt: Date; }) => (
         <ProductCardC
           key={product.id}
           img={product.picture1 ?? ''}

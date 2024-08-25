@@ -1,8 +1,13 @@
 import { PrismaClient } from '@prisma/client'
-import { ProductCardC } from '@/components/component/product-card-c';
 import { ProductsTable } from '@/components/component/products-table';
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
 const prisma = new PrismaClient();
 const  dashboard = async () => {
+  const session = await getServerSession();
+  if (!session) {
+    redirect("api/auth/signin");
+  }
     const products = await prisma.product.findMany();
 
     products.map((product) => {

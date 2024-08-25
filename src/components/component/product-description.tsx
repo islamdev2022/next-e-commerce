@@ -30,7 +30,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Button } from "@/components/ui/button"
 import { JSX, SVGProps } from "react"
 
-export function ProductDescription ({ product }: { product: { id: string, picture1: string, picture2: string, picture3: string ,  title: string, description: string, price: number } }) {
+export function ProductDescription ({ product }: { product: { id: string, picture1: string, picture2: string, picture3: string ,  title: string, description: string, price: number, anime:string } }) {
   if (!product) {
     return <div>Product not found</div>;
   }
@@ -100,80 +100,13 @@ export function ProductDescription ({ product }: { product: { id: string, pictur
             <div className="text-4xl font-bold">{product.price} DZD</div>
           </div>
           <div>
+            <p><b>{product.anime}</b></p>
+          </div>
+          <div>
             <p>{product.description}</p>
           </div>
         </div>
         <form className="grid gap-4 md:gap-10">
-          <div className="grid gap-2">
-            <Label htmlFor="color" className="text-base">
-              Color
-            </Label>
-            <RadioGroup id="color" defaultValue="black" className="flex items-center gap-2">
-              <Label
-                htmlFor="color-black"
-                className="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-muted"
-              >
-                <RadioGroupItem id="color-black" value="black" />
-                Black
-              </Label>
-              <Label
-                htmlFor="color-white"
-                className="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-muted"
-              >
-                <RadioGroupItem id="color-white" value="white" />
-                White
-              </Label>
-              <Label
-                htmlFor="color-blue"
-                className="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-muted"
-              >
-                <RadioGroupItem id="color-blue" value="blue" />
-                Blue
-              </Label>
-            </RadioGroup>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="size" className="text-base">
-              Size
-            </Label>
-            <RadioGroup id="size" defaultValue="m" className="flex items-center gap-2">
-              <Label
-                htmlFor="size-xs"
-                className="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-muted"
-              >
-                <RadioGroupItem id="size-xs" value="xs" />
-                XS
-              </Label>
-              <Label
-                htmlFor="size-s"
-                className="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-muted"
-              >
-                <RadioGroupItem id="size-s" value="s" />
-                S
-              </Label>
-              <Label
-                htmlFor="size-m"
-                className="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-muted"
-              >
-                <RadioGroupItem id="size-m" value="m" />
-                M
-              </Label>
-              <Label
-                htmlFor="size-l"
-                className="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-muted"
-              >
-                <RadioGroupItem id="size-l" value="l" />
-                L
-              </Label>
-              <Label
-                htmlFor="size-xl"
-                className="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-muted"
-              >
-                <RadioGroupItem id="size-xl" value="xl" />
-                XL
-              </Label>
-            </RadioGroup>
-          </div>
           <div className="grid gap-2">
             <Label htmlFor="quantity" className="text-base">
               Quantity
@@ -216,28 +149,6 @@ function StarIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
     </svg>
   )
 }
-
-
-function XIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M18 6 6 18" />
-      <path d="m6 6 12 12" />
-    </svg>
-  )
-}
-
 
 function ZoomInIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   return (

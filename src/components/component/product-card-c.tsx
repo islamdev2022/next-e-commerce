@@ -34,7 +34,7 @@ export function ProductCardC({img, title, description, price ,className,id}: {im
       </Link>
       <CardContent className="p-4">
         <div className="mb-2">
-          <Link href="#" className="block" prefetch={false}>
+          <Link href={`/product/${id}`} className="block" prefetch={false}>
             <h3 className="text-lg font-bold text-black">{title}</h3>
           </Link>
           <p className="text-sm text-muted-foreground">

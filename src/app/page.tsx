@@ -2,7 +2,12 @@ import Image from "next/image";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import Header from "@/components/Header";
 import ProductCards from "@/components/ProductCards";
-export default function Home() {
+import { getServerSession } from "next-auth";
+
+export default async function Home() {
+const session = await getServerSession();
+  console.log("sessionsddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
+  console.log(session?.user?.name);
   return (
     <main className="">
       {/* <AuroraBackground> */}

@@ -6,8 +6,9 @@ import { getProduct } from '@/app/actions';
 import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
   
   export default async function Page({ params }: { params: Params }) {
+
     const product = await getProduct(params.id);
-  
+  console.log("product")
     if (!product) {
       notFound();
     }
@@ -20,7 +21,7 @@ import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
       description: product.description!,
       price: product.price!,
       stock: product.stock!,
-      category: product.category!,
+      anime: product.anime!,
     };
     
   

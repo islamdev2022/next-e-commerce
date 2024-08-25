@@ -1,9 +1,13 @@
 import { cn } from "@/lib/utils";
-export default function okRootLayout({
+import { getServerSession } from "next-auth";
+import  SessionProvider  from "@/components/SessionProvider";
+export default async function okRootLayout({
     children,
   }: Readonly<{
     children: React.ReactNode;
   }>) {
+  const session = await getServerSession();
+
     return (
       <html lang="en">
         <body 
@@ -12,7 +16,9 @@ export default function okRootLayout({
            
           )}
         >
+          <SessionProvider session={session}>
           {children}
+          </SessionProvider>
           </body>
       </html>
     );

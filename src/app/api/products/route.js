@@ -1,6 +1,5 @@
 import {NextResponse} from 'next/server';
 import { PrismaClient } from '@prisma/client';
-
 const prisma = new PrismaClient();
 
 export async function POST(req) {
@@ -16,11 +15,7 @@ export async function POST(req) {
           picture1: body.picture1,
           picture2: body.picture2,
           picture3: body.picture3,
-          category: body.category,
-          sex: body.sex,
-          size: body.size,
-          color: body.color,
-          brandName: body.brandName,
+          anime: body.anime,
         },
       });
       return NextResponse.json(newProduct);

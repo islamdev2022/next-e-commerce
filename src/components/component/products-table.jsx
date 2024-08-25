@@ -24,15 +24,15 @@ To read more about using these font, please visit the Next.js documentation:
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
 "use client"
-
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 export function ProductsTable(products) {
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, imageUrls) => {
     try {
+     
       const response = await fetch('/api/products', {
         method: 'DELETE',
         headers: {
@@ -50,6 +50,9 @@ export function ProductsTable(products) {
       console.error('Error deleting product:', error);
     }
   };
+  
+  
+  
   
   console.log(products)
   const [sortColumn, setSortColumn] = useState("name")
@@ -135,7 +138,7 @@ export function ProductsTable(products) {
             {sortedProducts.map((product) => (
               <TableRow key={product.id}>
                 <TableCell className="font-medium">
-                  <img src={product.picture1} alt="" />
+                  <img src={product.picture1} alt="" className="w-10 h-10" />
                   </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell>{product.description}</TableCell>
@@ -149,7 +152,9 @@ export function ProductsTable(products) {
                       <FilePenIcon className="h-4 w-4" />
                       <span className="sr-only">Edit</span>
                     </Button>
-                    <Button size="icon" variant="ghost"onClick={() => handleDelete(product.id)}>
+                    <Button size="icon" variant="ghost"
+                    onClick={() => handleDelete(product.id, [product.picture1, product.picture2, product.picture3])}
+                    >
                       <TrashIcon className="h-4 w-4" />
                       <span className="sr-only">Delete</span>
                     </Button>

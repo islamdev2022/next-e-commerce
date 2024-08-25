@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,23 +8,74 @@ datasource db {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   name        String
-  description String?
+  description String
   price       Float
-  stock       Int      @default(0)
-  picture1    String?
-  picture2    String?
-  picture3    String?
-  category    String?
-  sex         Sex
-  size        String?
-  color       String?
-  brandName   String?
-  createdAt   DateTime @default(now())
+  stock       Int
+  picture1    String
+  picture2    String
+  picture3    String
+  anime       String
+  createdAt   DateTime   @default(now())
+
+  cartItems   CartItem[] @relation("ProductCartItems")
+  orders      Order[]    @relation("ProductOrders")
 }
 
-enum Sex {
-  male
-  female
+model Cart {
+  id            Int       @id @default(autoincrement())
+  sessionId     String    // Unique identifier for each cart session (for users not signed in)
+  createdAt     DateTime  @default(now())
+  cartItems     CartItem[]
+
+  @@unique([sessionId])
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  cartId    Int
+  productId Int
+  quantity  Int      @default(1)
+
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  product   Product  @relation("ProductCartItems", fields: [productId], references: [id])
+
+  @@unique([cartId, productId]) // Prevents the same product from being added multiple times
+}
+
+model Order {
+  id              Int       @id @default(autoincrement())
+  productId       Int
+  quantity        Int
+  totalPrice      Float
+  orderDate       DateTime   @default(now())
+  orderState      OrderState @default(PENDING)
+  destination     String     // Address details for shipping
+  userName        String     // Captures the user's name at checkout
+  userEmail       String     // Captures the user's email at checkout
+  userPhone       String     // Captures the user's phone number at checkout
+
+  updatedByAdminId Int?      
+  updatedAt       DateTime?  
+
+  product         Product    @relation("ProductOrders", fields: [productId], references: [id])
+  updatedByAdmin  Admin?     @relation("AdminOrders", fields: [updatedByAdminId], references: [id])
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String   // Store hashed password for security
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders    Order[]  @relation("AdminOrders") // Corrected relation name to match Order model
+}
+
+enum OrderState {
+  PENDING
+  COMPLETED
+  CANCELED
 }
