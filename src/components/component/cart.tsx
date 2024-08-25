@@ -57,14 +57,13 @@ export function Cart() {
   const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
   return (
     <Drawer>
-      <DrawerTrigger>
-        <Button variant="outline" className="relative">
-          <ShoppingCartIcon className="h-5 w-5" />
-          <Badge className="absolute -top-2 -right-2 rounded-full bg-primary px-2 py-1 text-xs text-primary-foreground">
+      <DrawerTrigger className="flex flex-col relative bottom-2">
+          <Badge className="bg-primary text-primary-foreground relative left-2 top-2">
             {cart.length}
           </Badge>
-        </Button>
-      </DrawerTrigger>
+          <ShoppingCartIcon className="h-6 w-6" />
+          
+    </DrawerTrigger>
       <DrawerContent className="w-full max-w-md">
         <DrawerHeader>
           <DrawerTitle>Shopping Cart</DrawerTitle>

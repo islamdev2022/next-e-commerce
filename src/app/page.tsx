@@ -8,6 +8,8 @@ export default async function Home() {
 const session = await getServerSession();
   console.log("sessionsddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
   console.log(session?.user?.name);
+  console.log(process.env.AUTH_USERNAME)
+  console.log(process.env.AUTH_PASSWORD)
   return (
     <main className="">
       {/* <AuroraBackground> */}

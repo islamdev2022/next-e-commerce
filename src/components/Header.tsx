@@ -6,10 +6,10 @@ import { Cart } from './component/cart';
 const Header = () => {
     return ( 
         <>
-    <div className='flex mt-6 justify-between items-center px-10 w-full'>
+    <div className='flex mt-6 justify-between items-center gap-5 px-3 sm:px-10 w-full'>
         <div>
             <img src="/assets/next.svg" alt="" className='w-20'/>
-            </div>
+        </div>
     <PlaceholdersAndVanishInput placeholders={["T-shirt", "Shoes","Shorts"]} onChange={function (e: React.ChangeEvent<HTMLInputElement>): void {
           throw new Error("Function not implemented.");
         } } onSubmit={function (e: React.FormEvent<HTMLFormElement>): void {
