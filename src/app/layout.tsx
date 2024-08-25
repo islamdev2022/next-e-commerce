@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import { cn } from "@/lib/utils";
 import { getServerSession } from "next-auth";
 import  SessionProvider  from "@/components/SessionProvider";
+import { SessionProviderG } from "@/context/sessionContext";
 const inter = Inter({ subsets: ["latin"] });
 
 const fontBody = Inter({
@@ -37,10 +38,15 @@ export default async function RootLayout({
           fontBody.variable
         )}
       >
+      
+
         <SessionProvider session={session}>
+          <SessionProviderG>
         <Header />
         {children}
+        </SessionProviderG>
         </SessionProvider>
+        
         
         </body>
     </html>

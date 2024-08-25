@@ -24,7 +24,7 @@ import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, Drawer
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
-export function Cart() {
+export function Cart({Cart}: {Cart: Object}) {
   const [cart, setCart] = useState([
     {
       id: 1,

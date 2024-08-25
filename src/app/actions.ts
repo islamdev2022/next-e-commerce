@@ -48,11 +48,11 @@ export const deleteImageFromCloudinary = async (publicId: string | Blob) => {
   // Generate a signature for the request using Node's crypto module
   const signatureString = `public_id=${publicId}&timestamp=${timestamp}${apiSecret}`;
   const signature = crypto.createHash('sha1').update(signatureString  + apiSecret ).digest('hex');
-  console.log("Cloudinary Cloud Name:",cloudName);
-  console.log("Cloudinary API Key:", apiKey);
-  console.log("String to sign:", signatureString);
-  console.log("Generated signature:", signature);
-  console.log("Timestamp:", timestamp);
+  // console.log("Cloudinary Cloud Name:",cloudName);
+  // console.log("Cloudinary API Key:", apiKey);
+  // console.log("String to sign:", signatureString);
+  // console.log("Generated signature:", signature);
+  // console.log("Timestamp:", timestamp);
 
   const formData = new FormData();
   formData.append('public_id', publicId);
@@ -88,3 +88,15 @@ export const deleteProduct = async (id: number) => {
     });
     return Deleteproduct;
     }
+
+/////////////CART////////////////////////
+
+export const getCart = async (sessionId: string) => {
+  const cart = await prisma.cart.findMany({
+    where: {
+      sessionId: sessionId,
+    },
+  });
+  return cart;
+};
+
