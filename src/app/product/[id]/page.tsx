@@ -8,20 +8,18 @@ import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
   export default async function Page({ params }: { params: Params }) {
 
     const product = await getProduct(params.id);
-  console.log("product")
-    if (!product) {
-      notFound();
-    }
+  console.log("product" , product);
+
     const details = {
-      id: product.id.toString(),
-      picture1: product.picture1!,
-      picture2: product.picture2!,
-      picture3: product.picture3!,
-      title: product.name!,
-      description: product.description!,
-      price: product.price!,
-      stock: product.stock!,
-      anime: product.anime!,
+      id: product?.id?.toString() ?? '',
+      picture1: product?.picture1 ?? '',
+      picture2: product?.picture2 ?? '',
+      picture3: product?.picture3 ?? '',
+      title: product?.name ?? '',
+      description: product?.description ?? '',
+      price: Number(product?.price) ?? 0,
+      stock: product?.stock ?? '',
+      anime: product?.anime ?? '',
     };
     
   

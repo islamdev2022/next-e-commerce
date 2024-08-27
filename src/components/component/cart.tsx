@@ -23,8 +23,13 @@ import { JSX, SVGProps, useState } from "react"
 import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { getCart } from "@/app/actions"
+export function Cart({SessionId}: {SessionId: string}) {
 
-export function Cart({Cart}: {Cart: Object}) {
+  // const [cart1, setCart1] = useState(getCart(SessionId));
+  // console.log("cart1", cart1);
+  const cart1 = getCart(SessionId);
+  console.log("cart1", cart1);
   const [cart, setCart] = useState([
     {
       id: 1,

@@ -49,17 +49,17 @@ export async function GET(req) {
 
       const cart = await prisma.cart.findFirst({
         where: { sessionId },
-        include: {
-          cartItems: {
-            include: {
-              product: true, // Optionally include product details for each cart item
-            },
-          },
-        },
+        // include: {
+        //   cartItems: {
+        //     include: {
+        //       product: true, // Optionally include product details for each cart item
+        //     },
+        //   },
+        // },
       });
  
       if (!cart) {
-        return NextResponse.json({ error: 'Cart not found' }, { status: 404 });
+        return NextResponse.json({ error: 'Cart not found with this id' }, { status: 404 });
       }
    }
       return NextResponse.json(cart);

@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Product {
-  id          Int        @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   name        String
   description String
   price       Float
@@ -17,19 +17,17 @@ model Product {
   picture2    String
   picture3    String
   anime       String
-  createdAt   DateTime   @default(now())
+  createdAt   DateTime    @default(now())
 
-  cartItems   CartItem[] @relation("ProductCartItems")
-  orders      Order[]    @relation("ProductOrders")
+  cartItems   CartItem[]  @relation("ProductCartItems")
+  orderItems  OrderItem[] @relation("ProductOrderItems")
 }
 
 model Cart {
-  id            Int       @id @default(autoincrement())
-  sessionId     String    // Unique identifier for each cart session (for users not signed in)
-  createdAt     DateTime  @default(now())
-  cartItems     CartItem[]
-
-  @@unique([sessionId])
+  id        Int        @id @default(autoincrement())
+  sessionId String     @unique // Unique identifier for each cart session (for users not signed in)
+  createdAt DateTime   @default(now())
+  cartItems CartItem[]
 }
 
 model CartItem {
@@ -45,33 +43,41 @@ model CartItem {
 }
 
 model Order {
-  id              Int       @id @default(autoincrement())
-  productId       Int
-  quantity        Int
-  totalPrice      Float
-  orderDate       DateTime   @default(now())
-  orderState      OrderState @default(PENDING)
-  destination     String     // Address details for shipping
-  userName        String     // Captures the user's name at checkout
-  userEmail       String     // Captures the user's email at checkout
-  userPhone       String     // Captures the user's phone number at checkout
-
+  id               Int         @id @default(autoincrement())
+  totalPrice       Float
+  orderDate        DateTime    @default(now())
+  orderState       OrderState  @default(PENDING)
+  destination      String      // Address details for shipping
+  Name         String      // Captures the user's name at checkout
+  Email        String      // Captures the user's email at checkout
+  Phone        String      // Captures the user's phone number at checkout
   updatedByAdminId Int?      
-  updatedAt       DateTime?  
+  updatedAt        DateTime?  
 
-  product         Product    @relation("ProductOrders", fields: [productId], references: [id])
-  updatedByAdmin  Admin?     @relation("AdminOrders", fields: [updatedByAdminId], references: [id])
+  orderItems       OrderItem[] @relation("OrderOrderItems")
+  updatedByAdmin   Admin?      @relation("AdminOrders", fields: [updatedByAdminId], references: [id])
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int      @default(1)
+
+  order     Order    @relation("OrderOrderItems", fields: [orderId], references: [id])
+  product   Product  @relation("ProductOrderItems", fields: [productId], references: [id])
+
+  @@unique([orderId, productId]) // Prevents the same product from being added multiple times
 }
 
 model Admin {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
+  name      String?  @unique
   password  String   // Store hashed password for security
-  name      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  orders    Order[]  @relation("AdminOrders") // Corrected relation name to match Order model
+  orders    Order[]  @relation("AdminOrders")
 }
 
 enum OrderState {

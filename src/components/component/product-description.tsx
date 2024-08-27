@@ -32,7 +32,12 @@ import { JSX, SVGProps } from "react"
 
 export function ProductDescription ({ product }: { product: { id: string, picture1: string, picture2: string, picture3: string ,  title: string, description: string, price: number, anime:string } }) {
   if (!product) {
+    console.log("productezerzes");
     return <div>Product not found</div>;
+  }
+  console.log("product", product);
+  if (product.title === '') {
+    return <div className="table mx-auto">Product not found</div>;
   }
   return (
     <div className="grid md:grid-cols-2 gap-6 lg:gap-12 items-start max-w-6xl px-4 mx-auto py-6">

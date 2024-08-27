@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import { cn } from "@/lib/utils";
 import { getServerSession } from "next-auth";
 import  SessionProvider  from "@/components/SessionProvider";
-import { SessionProviderG } from "@/context/sessionContext";
+import { cookies } from "next/headers";
 const inter = Inter({ subsets: ["latin"] });
 
 const fontBody = Inter({
@@ -29,6 +29,18 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getServerSession();
+
+  const cookieStore = cookies()
+  console.log("cookies");
+  const posthogCookie = cookieStore.get('ph_phc_JHXDEpCWQRLpHDZe6tMJdo4lVl62hy1P8n13cvMcqDU_posthog');
+
+  // Step 2: Parse the JSON string
+  const posthogData = posthogCookie ? JSON.parse(posthogCookie.value) : null;
+
+  // Step 3: Access the session ID from the `$sesid` array
+  const sessionId = posthogData?.$sesid?.[1];
+
+  console.log('Session ID:', sessionId);
   return (
     <html lang="en">
       <body 
@@ -38,16 +50,10 @@ export default async function RootLayout({
           fontBody.variable
         )}
       >
-      
-
         <SessionProvider session={session}>
-          <SessionProviderG>
-        <Header />
+        <Header sessionId={sessionId} />
         {children}
-        </SessionProviderG>
-        </SessionProvider>
-        
-        
+        </SessionProvider> 
         </body>
     </html>
   );

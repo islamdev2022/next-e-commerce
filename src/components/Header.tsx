@@ -2,12 +2,8 @@
 import React from 'react';
 import {PlaceholdersAndVanishInput} from './ui/placeholders-and-vanish-input';
 import { Cart } from './component/cart';
-import { getCart } from '@/app/actions';
-import { useSession } from '@/context/sessionContext';
 // import { cookies } from 'next/headers'
-const Header = () => {
-  const { sessionId, setSessionId } = useSession();
-  const Data = getCart(sessionId ?? '');
+const Header = ({sessionId}: {sessionId: any}) => {
   console.log("session from header", sessionId);
       return (
         <>
@@ -24,7 +20,7 @@ const Header = () => {
                 throw new Error("Function not implemented.");
               }}
             />
-            <Cart Cart={Data}></Cart>
+            <Cart SessionId={sessionId}></Cart>
           </div>
         </>
       );

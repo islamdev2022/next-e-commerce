@@ -2,6 +2,9 @@
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export const authOptions = {
   providers: [
@@ -16,18 +19,31 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // Implement your authentication logic here
-        if (
-          credentials?.username === process.env.AUTH_USERNAME &&
-          credentials?.password === process.env.AUTH_PASSWORD
-        ) {
-          // Return user object if authentication is successful
-          return { id: '1', name: 'Admin' };
-        } else {
-          // Return null if authentication fails
+        if (!credentials?.username || !credentials?.password) {
+          console.log("Missing username or password");
           return null;
         }
-      },
+      
+        const admin = await prisma.admin.findUnique({
+          where: { name: credentials.username },
+        });
+      
+        console.log("Fetched admin:", admin); // Debugging log
+      
+        if (!admin) {
+          console.log("No admin found with the given username");
+          throw new Error("Invalid username or password");
+        }
+      
+        if (credentials.password === admin.password) {
+          console.log("Password matched");
+          return { id: admin.id.toString(), name: admin.name ?? 'Admin' };
+        } else {
+          console.log("Password did not match");
+          throw new Error("Invalid username or password");
+        }
+      }
+      
     }),
   ],
   session: {
@@ -37,7 +53,7 @@ export const authOptions = {
     secret: process.env.NEXTAUTH_SECRET,
   },
   pages: {
-    signIn: "api/auth/signin", // Set your custom sign-in page
+    signIn: "/api/auth/signin", // Set your custom sign-in page
   },
   callbacks: {
     async redirect({ url, baseUrl }: { url: string, baseUrl: string }) {
