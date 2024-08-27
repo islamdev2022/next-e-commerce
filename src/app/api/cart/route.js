@@ -67,3 +67,15 @@ export async function GET(req) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
   }
+
+export async function DELETE(req) {
+  const body = await req.json();
+  try {
+    const deletedCart = await prisma.cart.delete({
+      where: { id: body.id },
+    });
+    return NextResponse.json(deletedCart);
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

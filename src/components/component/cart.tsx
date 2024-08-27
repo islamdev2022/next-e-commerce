@@ -19,52 +19,143 @@ To read more about using these font, please visit the Next.js documentation:
 **/
 "use client"
 
-import { JSX, SVGProps, useState } from "react"
+import { JSX, SVGProps, useState,useEffect } from "react"
 import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { getCart } from "@/app/actions"
+import { getCartItem } from "@/app/actions"
+import { getProduct } from "@/app/actions"
 export function Cart({SessionId}: {SessionId: string}) {
 
   // const [cart1, setCart1] = useState(getCart(SessionId));
   // console.log("cart1", cart1);
-  const cart1 = getCart(SessionId);
-  console.log("cart1", cart1);
-  const [cart, setCart] = useState([
-    {
-      id: 1,
-      name: "Cozy Blanket",
-      price: 29.99,
-      quantity: 1,
-      image: "/placeholder.svg",
-    },
-    {
-      id: 2,
-      name: "Autumn Mug",
-      price: 12.99,
-      quantity: 2,
-      image: "/placeholder.svg",
-    },
-    {
-      id: 3,
-      name: "Fall Fragrance Candle",
-      price: 16.99,
-      quantity: 1,
-      image: "/placeholder.svg",
-    },
-  ])
+  // const cart1 = getCart(SessionId);
+  // console.log("cart1", cart1); 
+  // cart1.then((data) => console.log("cart1", data.map((item) => item.id)));
+  const [cartItem, setCartItem] = useState<{ id: number; cartId: number; productId: number; quantity: number; }[]>([]);
+  const [cartId, setCartId] = useState(0);
+  useEffect(() => {
+    // Fetch cart data when the component mounts
+    const fetchCart = async () => {
+      try {
+        const cart1 = await getCart(SessionId);
+        if (cart1 && cart1.length > 0) {
+          const cartId = cart1[0].id;
+          console.log("cartId", cartId);
+          setCartId(cartId);
+        }
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+      }
+    };
+
+    fetchCart();
+  }, [SessionId]); // Dependency array: runs when SessionId changes
+
+  useEffect(() => {
+    // Function to fetch cart items
+    const fetchCartItems = async () => {
+      try {
+        const items = await getCartItem(cartId);
+        console.log("cartItem", items);
+        setCartItem(items);
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+      }
+    };
+    fetchCartItems(); // Call the function to fetch cart items
+  }, [cartId]);
+
+  console.log(cartItem)
+
+  cartItem.forEach(item => {
+    console.log("product ID" + item.productId); // This will log each productId
+    console.log("quantity" + item.quantity); // This will log each quantity
+    console.log("cartItemId" + item.id); // This will log each cartItemId
+  });
+
+const [productDetails , setProductDetails] = useState<{ id: number; name: string; price: number; stock: number; picture1: string | null; anime: string | null;quantity:number ; cartItem:number }[]>([]);
+useEffect(() => {
+  // Function to fetch product details
+  const fetchProducts = async () => {
+    try {
+      if (cartItem.length > 0) {
+        // Create a map of productId to cart item details for later reference
+        const cartItemMap = new Map(
+          cartItem.map(item => [item.productId, { quantity: item.quantity, cartItemId: item.id }])
+        );
+
+        // Create an array of product IDs from cartItem
+        const productIds = cartItem.map(item => item.productId);
+
+        // Fetch product details for each productId
+        const fetchPromises = productIds.map(id => getProduct(id));
+        const products = await Promise.all(fetchPromises);
+
+        // Combine product details with cart item details
+        const combinedProductDetails = products.map(product => {
+          const cartItemDetail = cartItemMap.get(product?.id ?? 0);
+          return {
+            id: product?.id ?? 0,
+            name: product?.name ?? '',
+            price: product?.price ?? 0,
+            stock: product?.stock ?? 0,
+            picture1: product?.picture1 ?? null,
+            anime: product?.anime ?? null,
+            quantity: cartItemDetail ? cartItemDetail.quantity : 0,
+            cartItem: cartItemDetail ? cartItemDetail.cartItemId : 0,
+          };
+        });
+
+        // Update state with the combined product details
+        console.log("combinedProductDetails", combinedProductDetails);
+        setProductDetails(combinedProductDetails);
+      }
+    } catch (error) {
+      console.error("Error fetching product details:", error);
+    }
+  };
+
+  // Fetch products when cartItem changes
+  fetchProducts();
+}, [cartItem]); // Dependency array: runs when cartItem changes
+
+
+const handleDelete = async (id : Number) => {
+  try {
+   
+    const response = await fetch('/api/cartItem', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id }),
+    });
+
+    if (response.ok) {
+      console.log('Cart Item deleted');
+    } else {
+      console.error('Failed to delete the Item');
+    }
+  } catch (error) {
+    console.error('Error deleting Item:', error);
+  }
+};
+
   const updateQuantity = (id: number, quantity: number) => {
-    setCart(cart.map((item) => (item.id === id ? { ...item, quantity } : item)))
+    setProductDetails(productDetails.map((item) => (item.id === id ? { ...item, quantity } : item)))
   }
   const removeFromCart = (id: number) => {
-    setCart(cart.filter((item) => item.id !== id))
+    handleDelete(id);
+    setProductDetails(productDetails.filter((item) => item.id !== id))
   }
-  const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  const total = productDetails.reduce((acc, item) => acc + item.price * item.quantity, 0)
   return (
     <Drawer>
       <DrawerTrigger className="flex flex-col relative bottom-2">
           <Badge className="bg-primary text-primary-foreground relative left-2 top-2">
-            {cart.length}
+            {cartItem.length}
           </Badge>
           <ShoppingCartIcon className="h-6 w-6" />
           
@@ -76,10 +167,10 @@ export function Cart({SessionId}: {SessionId: string}) {
         </DrawerHeader>
         <div className="flex-1 overflow-auto">
           <div className="grid gap-4 p-4">
-            {cart.map((item) => (
+            {productDetails.map((item) => (
               <div key={item.id} className="grid grid-cols-[80px_1fr_auto] items-center gap-4">
                 <img
-                  src="/placeholder.svg"
+                  src={item.picture1 ?? ""}
                   alt={item.name}
                   width={80}
                   height={80}
@@ -87,7 +178,7 @@ export function Cart({SessionId}: {SessionId: string}) {
                 />
                 <div className="grid gap-1">
                   <h4 className="font-medium">{item.name}</h4>
-                  <p className="text-sm text-muted-foreground">${item.price.toFixed(2)}</p>
+                  <p className="text-sm text-muted-foreground">{item.price.toFixed(2)} DA</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
@@ -113,7 +204,7 @@ export function Cart({SessionId}: {SessionId: string}) {
         <DrawerFooter className="border-t">
           <div className="flex items-center justify-between">
             <span className="text-lg font-medium">Total</span>
-            <span className="text-lg font-medium">${total.toFixed(2)}</span>
+            <span className="text-lg font-medium">{total.toFixed(2)} DA</span>
           </div>
           <Button className="mt-4 w-full">Checkout</Button>
         </DrawerFooter>
@@ -209,22 +300,3 @@ function Trash2Icon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
 }
 
 
-function XIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M18 6 6 18" />
-      <path d="m6 6 12 12" />
-    </svg>
-  )
-}

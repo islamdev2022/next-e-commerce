@@ -101,3 +101,13 @@ export const getCart = async (sessionId: string) => {
   return cart;
 };
 
+//////////////CART ITEM////////////////////
+
+export const getCartItem = async (cartId: number) => {
+  const cartItem = await prisma.cartItem.findMany({
+    where: {
+      cartId: cartId,
+    },
+  });
+  return cartItem;
+};

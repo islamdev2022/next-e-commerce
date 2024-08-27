@@ -33,6 +33,7 @@ const ProductCards: React.FC<ProductCardsProps>  = ({ session }) => {
       <div className="flex flex-wrap items-center justify-between px-12 my-10">
         {products.map((product: { id: number; name: string; description: string | null; price: number; stock: number; picture1: string | null; picture2: string | null; picture3: string | null; anime: string | null; createdAt: Date; }) => (
           <ProductCardC
+            sessionId={session}
             key={product.id}
             img={product.picture1 ?? ''}
             title={product.name}
