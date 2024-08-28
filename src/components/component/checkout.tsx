@@ -23,6 +23,7 @@ To read more about using these font, please visit the Next.js documentation:
 - App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
+"use client"
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,12 +31,40 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from 'react';
 
 export function Checkout() {
-  const subtotal = 100
-  const shipping = 9.99;
-  const tax = subtotal * 0.1;
-  const total = subtotal + shipping + tax;
+  interface Product {
+    id: string;
+    name: string;
+    price: number;
+    quantity: number;
+  }
+  
+  const [productDetails, setProductDetails] = useState<Product[]>([]);
+
+  // Shipping cost
+  const shipping = 500;
+
+  // Calculate subtotal and total
+  const subtotal = productDetails.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const total = subtotal + shipping;
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const items = searchParams.get('items');
+    if (items) {
+      try {
+        const decodedProductDetails = decodeURIComponent(items);
+        const parsedProductDetails = JSON.parse(decodedProductDetails);
+        setProductDetails(parsedProductDetails);
+      } catch (error) {
+        console.error('Error parsing product details:', error);
+      }
+    }
+  }, [searchParams]);
 
   return (
     <div className="container mx-auto max-w-4xl py-12 px-4 md:px-6">
@@ -45,12 +74,8 @@ export function Checkout() {
           <form className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input id="firstName" placeholder="John" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input id="lastName" placeholder="Doe" />
+                <Label htmlFor="fullName">Full Name</Label>
+                <Input id="fullName" placeholder="John Doe" />
               </div>
             </div>
             <div className="space-y-2">
@@ -62,28 +87,14 @@ export function Checkout() {
               <Textarea id="address" rows={3} placeholder="123 Main St, Anytown USA" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="paymentMethod">Payment Method</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select payment method" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="credit-card">Credit Card</SelectItem>
-                  <SelectItem value="paypal">PayPal</SelectItem>
-                  <SelectItem value="apple-pay">Apple Pay</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
               <Label htmlFor="shippingMethod">Shipping Method</Label>
               <Select>
                 <SelectTrigger>
                   <SelectValue placeholder="Select shipping method" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="standard">Standard Shipping</SelectItem>
-                  <SelectItem value="express">Express Shipping</SelectItem>
-                  <SelectItem value="priority">Priority Shipping</SelectItem>
+                  <SelectItem value="office">Delivery Company office</SelectItem>
+                  <SelectItem value="Home">Home Shipping</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -99,38 +110,34 @@ export function Checkout() {
               <CardTitle>Items in Cart</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* {cart.map((item) => (
-                <div key={item.id} className="flex items-center justify-between">
+              {productDetails.map((item) => (
+                <div key={item?.id} className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">{item.name}</h3>
                     <p className="text-muted-foreground">Quantity: {item.quantity}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium">${item.price.toFixed(2)}</p>
-                    <p className="text-muted-foreground">${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="font-medium">{item.price.toFixed(2)} DA</p>
+                    <p className="text-muted-foreground">{(item.price * item.quantity).toFixed(2)} DA</p>
                   </div>
                 </div>
-              ))} */}
+              ))}
             </CardContent>
             <Separator />
             <CardContent className="space-y-2">
               <div className="flex items-center justify-between">
                 <p>Subtotal</p>
-                <p className="font-medium">${subtotal.toFixed(2)}</p>
+                <p className="font-medium">{subtotal.toFixed(2)} DA</p>
               </div>
               <div className="flex items-center justify-between">
                 <p>Shipping</p>
-                <p className="font-medium">${shipping.toFixed(2)}</p>
-              </div>
-              <div className="flex items-center justify-between">
-                <p>Tax</p>
-                <p className="font-medium">${tax.toFixed(2)}</p>
+                <p className="font-medium">{shipping.toFixed(2)} DA</p>
               </div>
             </CardContent>
             <Separator />
             <CardFooter className="flex items-center justify-between">
               <p className="text-lg font-bold">Total</p>
-              <p className="text-lg font-bold">${total.toFixed(2)}</p>
+              <p className="text-lg font-bold">{total.toFixed(2)} DA</p>
             </CardFooter>
           </Card>
         </div>

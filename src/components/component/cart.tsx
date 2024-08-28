@@ -27,6 +27,7 @@ import { getCart } from "@/app/actions"
 import { getCartItem } from "@/app/actions"
 import { getProduct } from "@/app/actions"
 import { useToast } from "@/components/ui/use-toast"
+import Link from "next/link"
 export function Cart({SessionId}: {SessionId: string}) {
 
   // const [cart1, setCart1] = useState(getCart(SessionId));
@@ -77,7 +78,7 @@ export function Cart({SessionId}: {SessionId: string}) {
     console.log("cartItemId" + item.id); // This will log each cartItemId
   });
 
-const [productDetails , setProductDetails] = useState<{ id: number; name: string; price: number; stock: number; picture1: string | null; anime: string | null;quantity:number ; cartItem:number }[]>([]);
+const [productDetails , setProductDetails] = useState<{ id: number; name: string; price: number; stock: number; picture1: string | null; anime: string | null;quantity:number ; cartItem:number ; cartId:number}[]>([]);
 useEffect(() => {
   // Function to fetch product details
   const fetchProducts = async () => {
@@ -107,6 +108,7 @@ useEffect(() => {
             anime: product?.anime ?? null,
             quantity: cartItemDetail ? cartItemDetail.quantity : 0,
             cartItem: cartItemDetail ? cartItemDetail.cartItemId : 0,
+            cartId: cartId
           };
         });
 
@@ -137,15 +139,17 @@ const handleDelete = async (id : Number) => {
 
     if (response.ok) {
       console.log("Item deleted from the cart");
-      setProductDetails(productDetails.filter((item) => item.id !== id))
+      setProductDetails(productDetails.filter((item) => item.cartItem !== id))
       toast({
         title: "Item deleted from the cart succesfully",
       })
     } else {
+      const errorData = await response.json(); // Fetch error details
       console.error("Failed to delete item from cart");
       toast({
-        title: "Failed to delete item from cart",
-      })
+        title: `Failed to delete item with id ${id} from cart`,
+        description: errorData.error || "An unexpected error occurred", // Show error details if available
+      });
     }
   } catch (error) {
     console.error('Error deleting Item:', error);
@@ -181,6 +185,10 @@ const updateQuantity = (id: number, quantity: number) => {
     
   }
   const total = productDetails.reduce((acc, item) => acc + item.price * item.quantity, 0)
+
+  // Serialize the productDetails array
+const serializedProductDetails = JSON.stringify(productDetails);
+const encodedProductDetails = encodeURIComponent(serializedProductDetails);
   return (
     <Drawer>
       <DrawerTrigger className="flex flex-col relative bottom-2">
@@ -223,7 +231,7 @@ const updateQuantity = (id: number, quantity: number) => {
                   <Button variant="ghost" size="icon" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
                     <PlusIcon className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.id)}>
+                  <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.cartItem)}>
                     <Trash2Icon className="h-4 w-4" />
                   </Button>
                 </div>
@@ -237,7 +245,9 @@ const updateQuantity = (id: number, quantity: number) => {
             <span className="text-lg font-medium">Total</span>
             <span className="text-lg font-medium">{total.toFixed(2)} DA</span>
           </div>
+          <Link href={`/checkout?items=${encodedProductDetails}`}>
           <Button className="mt-4 w-full">Checkout</Button>
+        </Link>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
