@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge"
 import { getCart } from "@/app/actions"
 import { getCartItem } from "@/app/actions"
 import { getProduct } from "@/app/actions"
+import { useToast } from "@/components/ui/use-toast"
 export function Cart({SessionId}: {SessionId: string}) {
 
   // const [cart1, setCart1] = useState(getCart(SessionId));
@@ -35,6 +36,7 @@ export function Cart({SessionId}: {SessionId: string}) {
   // cart1.then((data) => console.log("cart1", data.map((item) => item.id)));
   const [cartItem, setCartItem] = useState<{ id: number; cartId: number; productId: number; quantity: number; }[]>([]);
   const [cartId, setCartId] = useState(0);
+  const { toast } = useToast()
   useEffect(() => {
     // Fetch cart data when the component mounts
     const fetchCart = async () => {
@@ -134,21 +136,49 @@ const handleDelete = async (id : Number) => {
     });
 
     if (response.ok) {
-      console.log('Cart Item deleted');
+      console.log("Item deleted from the cart");
+      setProductDetails(productDetails.filter((item) => item.id !== id))
+      toast({
+        title: "Item deleted from the cart succesfully",
+      })
     } else {
-      console.error('Failed to delete the Item');
+      console.error("Failed to delete item from cart");
+      toast({
+        title: "Failed to delete item from cart",
+      })
     }
   } catch (error) {
     console.error('Error deleting Item:', error);
   }
 };
+const [quantityErrors, setQuantityErrors] = useState<{ [key: number]: string }>({});
+const updateQuantity = (id: number, quantity: number) => {
+  setProductDetails(
+    productDetails.map((item) => {
+      if (item.id === id) {
+        if (quantity > item.stock) {
+          setQuantityErrors((prevErrors) => ({
+            ...prevErrors,
+            [id]: `Quantity cannot exceed available stock of ${item.stock}`,
+          }));
+          return { ...item, quantity: item.stock }; // Limit to available stock
+        } else {
+          setQuantityErrors((prevErrors) => {
+            const { [id]: _, ...rest } = prevErrors; // Remove the error for this item
+            return rest;
+          });
+          return { ...item, quantity }; // Update with desired quantity
+        }
+      }
+      return item; // No change for items with different ids
+    })
+  );
+};
 
-  const updateQuantity = (id: number, quantity: number) => {
-    setProductDetails(productDetails.map((item) => (item.id === id ? { ...item, quantity } : item)))
-  }
+
   const removeFromCart = (id: number) => {
     handleDelete(id);
-    setProductDetails(productDetails.filter((item) => item.id !== id))
+    
   }
   const total = productDetails.reduce((acc, item) => acc + item.price * item.quantity, 0)
   return (
@@ -197,6 +227,7 @@ const handleDelete = async (id : Number) => {
                     <Trash2Icon className="h-4 w-4" />
                   </Button>
                 </div>
+                <p className="w-72 text-sm sm:w-80 text-red-600 font-semibold">{quantityErrors[item.id]}</p>
               </div>
             ))}
           </div>

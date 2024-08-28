@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { getCart } from "@/app/actions"
 import { useState,useEffect } from "react"
+import { useToast } from "@/components/ui/use-toast"
 export function ProductCardC({img, title, description, price ,className,id,sessionId}: {img: string, title: string, description: string, price: number,className:string,id:Number,sessionId:string}) {
   const [cartId, setCartId] = useState(0);
   useEffect(() => {
@@ -23,6 +24,8 @@ export function ProductCardC({img, title, description, price ,className,id,sessi
 
     fetchCart();
   }, [sessionId]); // Dependency array: runs when SessionId changes
+
+  const { toast } = useToast()
   const handleCreate = async () => {
     const res = await fetch("/api/cartItem", {
       method: "POST",
@@ -38,8 +41,14 @@ export function ProductCardC({img, title, description, price ,className,id,sessi
     });
     if (res.ok) {
       console.log("Item added to cart");
+      toast({
+        title: "Item Added to Cart succesfully",
+      })
     } else {
       console.error("Failed to add item to cart");
+      toast({
+        title: "Item Already in Cart",
+      })
     }
   }
   const handleSubmit = (e: React.FormEvent) => {

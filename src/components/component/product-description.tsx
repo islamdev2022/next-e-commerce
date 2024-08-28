@@ -23,14 +23,15 @@ To read more about using these font, please visit the Next.js documentation:
 - App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
+"use client"
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-import { JSX, SVGProps } from "react"
-
-export function ProductDescription ({ product }: { product: { id: string, picture1: string, picture2: string, picture3: string ,  title: string, description: string, price: number, anime:string } }) {
+import { JSX, SVGProps,useState,useEffect } from "react"
+import { getCart } from "@/app/actions"
+import { useToast } from "@/components/ui/use-toast"
+export function ProductDescription ({ product,sessionId }: { product: { id: string, picture1: string, picture2: string, picture3: string ,  title: string, description: string, price: number, anime:string } ;sessionId: string }) {
   if (!product) {
     console.log("productezerzes");
     return <div>Product not found</div>;
@@ -39,6 +40,54 @@ export function ProductDescription ({ product }: { product: { id: string, pictur
   if (product.title === '') {
     return <div className="table mx-auto">Product not found</div>;
   }
+  const [cartId, setCartId] = useState(0);
+  useEffect(() => {
+    // Fetch cart data when the component mounts
+    const fetchCart = async () => {
+      try {
+        const cart1 = await getCart(sessionId);
+        if (cart1 && cart1.length > 0) {
+          const cartId = cart1[0].id;
+          console.log("cartId", cartId);
+          setCartId(cartId);
+        }
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+      }
+    };
+
+    fetchCart();
+  }, [sessionId]);
+  const { toast } = useToast()
+  const handleCreate = async () => {
+    const res = await fetch("/api/cartItem", {
+      method: "POST",
+      
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        productId: product.id,
+        quantity: 1,
+        cartId: cartId,
+      }),
+    });
+    if (res.ok) {
+      console.log("Item added to cart");
+      toast({
+        title: "Item Added to Cart succesfully",
+      })
+    } else {
+      console.error("Failed to add item to cart");
+      toast({
+        title: "Item Already in Cart",
+      })
+    }
+  }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleCreate();
+  };
   return (
     <div className="grid md:grid-cols-2 gap-6 lg:gap-12 items-start max-w-6xl px-4 mx-auto py-6">
       <div className="grid gap-4 md:gap-8">
@@ -129,7 +178,7 @@ export function ProductDescription ({ product }: { product: { id: string, pictur
               </SelectContent>
             </Select>
           </div>
-          <Button size="lg">Add to cart</Button>
+          <Button size="lg" onClick={handleSubmit} >Add to cart</Button>
         </form>
       </div>
     </div>

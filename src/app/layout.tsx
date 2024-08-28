@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { getServerSession } from "next-auth";
 import  SessionProvider  from "@/components/SessionProvider";
 import { cookies } from "next/headers";
+import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] });
 
 const fontBody = Inter({
@@ -54,6 +55,7 @@ export default async function RootLayout({
         <Header sessionId={sessionId} />
         {children}
         </SessionProvider> 
+        <Toaster />
         </body>
     </html>
   );
