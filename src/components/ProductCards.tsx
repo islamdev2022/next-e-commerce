@@ -44,7 +44,6 @@ const ProductCards: React.FC<ProductCardsProps>  = ({ session }) => {
           />
         ))}
       </div>
-      <Checkout />
     </>
   );
 };
