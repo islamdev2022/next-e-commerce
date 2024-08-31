@@ -57,6 +57,7 @@ export function Checkout({SessionId}: {SessionId: string}) {
     productDetails: [] as Product[],
     total: 0,  // Add total to formState
   });
+  
 
   // Shipping cost
   const shipping = 500;
@@ -102,7 +103,6 @@ export function Checkout({SessionId}: {SessionId: string}) {
     }));
   }, [subtotal]);
 
-  console.log(formState)
   const { toast } = useToast()
   const handleCreate = async () => {
     try {
@@ -129,10 +129,6 @@ export function Checkout({SessionId}: {SessionId: string}) {
       // Capture the order ID from the response
       const orderData = await orderResponse.json();
     const orderId = orderData.orderId; // Ensure this is correct
-
-    // Log the order ID for debugging
-    console.log("Created order ID:", orderId);
-      console.log("Order created successfully!", orderId);
       toast({
         title: "Order created successfully!",
       });
@@ -159,30 +155,9 @@ export function Checkout({SessionId}: {SessionId: string}) {
           throw new Error(`Failed to create order item for product ${product.name}: ${errorData.error || "Unknown error"}`);
         }
   
-        console.log("Order item created successfully!");
         toast({
           title: "Order item created successfully!",
         });
-        // Update the stock quantity of the product
-      //   const response = await fetch('/api/products', {
-      //     method: 'PUT',
-      //     headers: {
-      //         'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify({
-      //         productId: product.id, // Replace with the actual product ID
-      //         stock: 20     // New stock quantity
-      //     }),
-      // });
-      
-      // if (!response.ok) {
-      //     const errorData = await response.json();
-      //     throw new Error(`Failed to update product stock: ${errorData.error || 'Unknown error'}`);
-      // }
-      
-      // const updatedProduct = await response.json();
-      // console.log('Updated product:', updatedProduct);
-       
       }
 
       // Now, delete the cart items
@@ -207,7 +182,8 @@ export function Checkout({SessionId}: {SessionId: string}) {
     } catch (error) {
       console.error("Order creation failed:", error);
       toast({
-        title: `Order creation failed: ${error as string}`,
+        title: `Order creation failed `,
+        description: `${error as string}`,
       });
     }
   };
@@ -231,7 +207,6 @@ export function Checkout({SessionId}: {SessionId: string}) {
         const cart1 = await getCart(SessionId);
         if (cart1 && cart1.length > 0) {
           const cartId = cart1[0].id;
-          console.log("cartId", cartId);
           setCartId(cartId);
         }
       } catch (error) {

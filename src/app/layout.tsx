@@ -52,7 +52,7 @@ export default async function RootLayout({
         )}
       >
         <SessionProvider session={session}>
-        <Header sessionId={sessionId} />
+
         {children}
         </SessionProvider> 
         <Toaster />

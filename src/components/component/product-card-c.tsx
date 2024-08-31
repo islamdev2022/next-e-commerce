@@ -14,8 +14,25 @@ export function ProductCardC({img, title, description, price ,className,id,sessi
         const cart1 = await getCart(sessionId);
         if (cart1 && cart1.length > 0) {
           const cartId = cart1[0].id;
-          console.log("cartId", cartId);
           setCartId(cartId);
+        }else{
+          try{
+            const cartResponse = await fetch("/api/cart" , {
+              method : "POST",
+              headers:{
+                "Content-Type" : "application/json",
+              },
+              body:JSON.stringify({
+                sessionId:sessionId
+              })
+            })
+            if(!cartResponse.ok){
+              const errorData= await cartResponse.json()
+              throw new Error(`failed to create Cart: ${errorData.error || "UnkownError"} ` )
+            }
+          }catch (error){
+            console.error("cart creation failed", error)
+          }
         }
       } catch (error) {
         console.error("Error fetching cart:", error);
@@ -40,7 +57,6 @@ export function ProductCardC({img, title, description, price ,className,id,sessi
       }),
     });
     if (res.ok) {
-      console.log("Item added to cart");
       toast({
         title: "Item Added to Cart succesfully",
       })

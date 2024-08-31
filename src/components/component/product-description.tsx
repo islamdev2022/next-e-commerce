@@ -32,6 +32,7 @@ import { JSX, SVGProps,useState,useEffect, SetStateAction } from "react"
 import { getCart } from "@/app/actions"
 import { useToast } from "@/components/ui/use-toast"
 import ProductNotFound from "@/components/component/product-not-found"
+import Header from "../Header"
 export function ProductDescription ({ product,sessionId }: { product: { id: number, picture1: string, picture2: string, picture3: string ,  title: string, description: string, price: number, anime:string } ;sessionId: string }) {
   if (!product) {
     return <ProductNotFound/>
@@ -53,7 +54,6 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
         const cart1 = await getCart(sessionId);
         if (cart1 && cart1.length > 0) {
           const cartId = cart1[0].id;
-          console.log("cartId", cartId);
           setCartId(cartId);
         }
       } catch (error) {
@@ -78,7 +78,6 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
       }),
     });
     if (res.ok) {
-      console.log("Item added to cart");
       toast({
         title: "Item Added to Cart succesfully",
       })
@@ -94,91 +93,72 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
     handleCreate();
   };
   return (
-    <div className="grid md:grid-cols-2 gap-6 lg:gap-12 items-start max-w-6xl px-4 mx-auto py-6">
-      <div className="grid gap-4 md:gap-8">
-        <Carousel className="w-full max-w-md">
-          <CarouselContent>
-            <CarouselItem>
-              <div className="relative group">
-                <img
-                  src={product.picture1}
-                  width={600}
-                  height={600}
-                  alt="Product Image"
-                  className="aspect-square object-cover w-full rounded-lg overflow-hidden group-hover:scale-110 transition-transform"
-                />
+    <div className="flex flex-col h-full">
+      <Header sessionId={sessionId} />
+      <div className="max-w-6xl px-4 mx-auto py-6 space-y-8 ">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-12 items-start">
+          <div className="grid gap-4 md:gap-8">
+            <Carousel className="w-full max-w-md mx-auto">
+              <CarouselContent>
+                {[product.picture1, product.picture2, product.picture3].map((picture, index) => (
+                  <CarouselItem key={index}>
+                    <div className="relative group">
+                      <img
+                        src={picture}
+                        width={600}
+                        height={600}
+                        alt={`Product Image ${index + 1}`}
+                        className="aspect-square object-cover w-full rounded-lg overflow-hidden group-hover:scale-110 transition-transform"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden sm:flex" />
+              <CarouselNext className="hidden sm:flex" />
+            </Carousel>
+          </div>
+          <div className="grid gap-4 md:gap-10 items-start">
+            <div className="grid gap-2">
+              <h1 className="font-bold text-2xl sm:text-3xl lg:text-4xl">{product.title}</h1>
+              <div className="flex flex-wrap items-center gap-2 md:gap-4">
+                <div className="flex items-center gap-0.5">
+                  {[...Array(5)].map((_, i) => (
+                    <StarIcon key={i} className={`w-4 h-4 sm:w-5 sm:h-5 ${i < 5 ? 'fill-primary' : 'fill-muted stroke-muted-foreground'}`} />
+                  ))}
+                </div>
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold">{product.price} DZD</div>
               </div>
-            </CarouselItem>
-            <CarouselItem>
-              <div className="relative group">
-                <img
-                  src={product.picture2}
-                  width={600}
-                  height={600}
-                  alt="Product Image"
-                  className="aspect-square object-cover w-full rounded-lg overflow-hidden group-hover:scale-110 transition-transform"
-                />
-                
+              <div>
+                <p className="font-semibold">{product.anime}</p>
               </div>
-            </CarouselItem>
-            <CarouselItem>
-              <div className="relative group">
-                <img
-                  src={product.picture3}
-                  width={600}
-                  height={600}
-                  alt="Product Image"
-                  className="aspect-square object-cover w-full rounded-lg overflow-hidden group-hover:scale-110 transition-transform"
-                />
+              <div>
+                <p className="text-sm sm:text-base">{product.description}</p>
               </div>
-            </CarouselItem>
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
-      </div>
-      <div className="grid gap-4 md:gap-10 items-start">
-        <div className="grid gap-2">
-          <h1 className="font-bold text-3xl lg:text-4xl">{product.title}</h1>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-0.5">
-              <StarIcon className="w-5 h-5 fill-primary" />
-              <StarIcon className="w-5 h-5 fill-primary" />
-              <StarIcon className="w-5 h-5 fill-primary" />
-              <StarIcon className="w-5 h-5 fill-muted stroke-muted-foreground" />
-              <StarIcon className="w-5 h-5 fill-muted stroke-muted-foreground" />
             </div>
-            <div className="text-4xl font-bold">{product.price} DZD</div>
-          </div>
-          <div>
-            <p><b>{product.anime}</b></p>
-          </div>
-          <div>
-            <p>{product.description}</p>
+            <form className="grid gap-4 md:gap-10">
+              <div className="grid gap-2">
+                <Label htmlFor="quantity" className="text-base">
+                  Quantity
+                </Label>
+                <Select value={selectedQuantity.toString()} onValueChange={handleQuantityChange}>
+                  <SelectTrigger className="w-full sm:w-24">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[1, 2, 3, 4, 5].map((num) => (
+                      <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button size="lg" onClick={handleSubmit} className="w-full sm:w-auto">Add to cart</Button>
+            </form>
           </div>
         </div>
-        <form className="grid gap-4 md:gap-10">
-          <div className="grid gap-2">
-            <Label htmlFor="quantity" className="text-base">
-              Quantity
-            </Label>
-            <Select value={selectedQuantity.toString()} onValueChange={handleQuantityChange}>
-              <SelectTrigger className="w-24">
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">1</SelectItem>
-                <SelectItem value="2">2</SelectItem>
-                <SelectItem value="3">3</SelectItem>
-                <SelectItem value="4">4</SelectItem>
-                <SelectItem value="5">5</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <Button size="lg" onClick={handleSubmit} >Add to cart</Button>
-        </form>
       </div>
     </div>
+
   )
 }
 

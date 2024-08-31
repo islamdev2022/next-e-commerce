@@ -90,15 +90,44 @@ export const deleteProduct = async (id: number) => {
     return Deleteproduct;
     }
 
+    export const updateProductStock = async(productId: number, quantity: number)=> {
+      // Fetch the current stock of the product
+      const product = await prisma.product.findUnique({
+        where: { id: productId },
+      });
+    
+      if (!product) {
+        throw new Error(`Product with id ${productId} not found.`);
+      }
+    
+      if (product.stock < quantity) {
+        throw new Error(
+          `Insufficient stock for product id ${productId}. Available: ${product.stock}, Required: ${quantity}`
+        );
+      }
+    
+      // Decrease the stock by the quantity ordered
+      return await prisma.product.update({
+        where: { id: productId },
+        data: { stock: product.stock - quantity },
+      });
+    }
+
 /////////////CART////////////////////////
 
 export const getCart = async (sessionId: string) => {
-  const cart = await prisma.cart.findMany({
+  try {
+    const cart = await prisma.cart.findMany({
     where: {
       sessionId: sessionId,
     },
   });
   return cart;
+  } catch(error){
+    console.error('no cart with this session ID')
+    
+  }
+  
 };
 
 //////////////CART ITEM////////////////////
@@ -111,3 +140,32 @@ export const getCartItem = async (cartId: number) => {
   });
   return cartItem;
 };
+
+
+//////////////ORDERS////////////////////
+export async function getOrders() {
+  const order = await prisma.order.findMany();
+  return order;
+}
+
+export async function getOrderItemsByOrderID(orderID: number) {
+  try {
+    const orderWithItems = await prisma.order.findUnique({
+      where: {
+        id: orderID,
+      },
+      include: {
+        orderItems: true, // Include the orderItems associated with the order
+      },
+    });
+
+    if (!orderWithItems) {
+      throw new Error('Order not found');
+    }
+
+    return orderWithItems.orderItems;
+  } catch (error) {
+    console.error('Error fetching order items:', error);
+    throw error;
+  }
+}

@@ -10,13 +10,11 @@ export default function SignInCmp() {
 
   const handleUsernameChange = (e: { target: { value: any; }; }) => {
     const newUsername = e.target.value;
-    console.log(newUsername);
     setUsername(newUsername);
   };
 
   const handlePasswordChange = (e: { target: { value: any; }; }) => {
     const newPassword = e.target.value;
-    console.log(  newPassword);
     setPassword(newPassword)
   };
 

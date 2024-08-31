@@ -30,11 +30,6 @@ import { useToast } from "@/components/ui/use-toast"
 import Link from "next/link"
 export function Cart({SessionId}: {SessionId: string}) {
 
-  // const [cart1, setCart1] = useState(getCart(SessionId));
-  // console.log("cart1", cart1);
-  // const cart1 = getCart(SessionId);
-  // console.log("cart1", cart1); 
-  // cart1.then((data) => console.log("cart1", data.map((item) => item.id)));
   const [cartItem, setCartItem] = useState<{ id: number; cartId: number; productId: number; quantity: number; }[]>([]);
   const [cartId, setCartId] = useState(0);
   const { toast } = useToast()
@@ -45,8 +40,25 @@ export function Cart({SessionId}: {SessionId: string}) {
         const cart1 = await getCart(SessionId);
         if (cart1 && cart1.length > 0) {
           const cartId = cart1[0].id;
-          console.log("cartId", cartId);
           setCartId(cartId);
+        }else{
+          try{
+            const cartResponse = await fetch("/api/cart" , {
+              method : "POST",
+              headers:{
+                "Content-Type" : "application/json",
+              },
+              body:JSON.stringify({
+                SessionId:SessionId
+              })
+            })
+            if(!cartResponse.ok){
+              const errorData= await cartResponse.json()
+              throw new Error(`failed to create Cart: ${errorData.error || "UnkownError"} ` )
+            }
+          }catch (error){
+            console.error("cart creation failed", error)
+          }
         }
       } catch (error) {
         console.error("Error fetching cart:", error);
@@ -61,7 +73,6 @@ export function Cart({SessionId}: {SessionId: string}) {
     const fetchCartItems = async () => {
       try {
         const items = await getCartItem(cartId);
-        console.log("cartItem", items);
         setCartItem(items);
       } catch (error) {
         console.error("Error fetching cart items:", error);
@@ -70,13 +81,6 @@ export function Cart({SessionId}: {SessionId: string}) {
     fetchCartItems(); // Call the function to fetch cart items
   }, [cartId]);
 
-  console.log(cartItem)
-
-  cartItem.forEach(item => {
-    console.log("product ID" + item.productId); // This will log each productId
-    console.log("quantity" + item.quantity); // This will log each quantity
-    console.log("cartItemId" + item.id); // This will log each cartItemId
-  });
 
 const [productDetails , setProductDetails] = useState<{ id: number; name: string; price: number; stock: number; picture1: string | null; anime: string | null;quantity:number ; cartItem:number ; cartId:number}[]>([]);
 useEffect(() => {
@@ -113,7 +117,6 @@ useEffect(() => {
         });
 
         // Update state with the combined product details
-        console.log("combinedProductDetails", combinedProductDetails);
         setProductDetails(combinedProductDetails);
       }
     } catch (error) {
@@ -138,7 +141,6 @@ const handleDelete = async (cartItemId : Number) => {
     });
 
     if (response.ok) {
-      console.log("Item deleted from the cart");
       setProductDetails(productDetails.filter((item) => item.cartItem !== cartItemId))
       toast({
         title: "Item deleted from the cart succesfully",

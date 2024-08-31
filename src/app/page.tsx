@@ -27,7 +27,7 @@ if (posthogCookie && posthogCookie.value) {
   return (
     <main className="">
       {/* <AuroraBackground> */}
-       
+      <Header sessionId={sessionId} />
                 
         <ProductCards session={sessionId}></ProductCards>
       {/* </AuroraBackground> */}
