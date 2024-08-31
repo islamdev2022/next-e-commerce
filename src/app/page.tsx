@@ -14,7 +14,6 @@ const session = await getServerSession();
   }
   
   const cookieStore = cookies()
-  console.log("cookies");
   const posthogCookie = cookieStore.get('ph_phc_JHXDEpCWQRLpHDZe6tMJdo4lVl62hy1P8n13cvMcqDU_posthog');
 
 if (posthogCookie && posthogCookie.value) {

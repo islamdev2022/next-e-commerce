@@ -35,7 +35,9 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import wilayas from '@/wilayas.json';
 import { useToast } from "../ui/use-toast";
-export function Checkout() {
+import { getCart } from "@/app/actions";
+import { getCartItem } from "@/app/actions";
+export function Checkout({SessionId}: {SessionId: string}) {
   interface Product {
     id: string;
     name: string;
@@ -161,9 +163,43 @@ export function Checkout() {
         toast({
           title: "Order item created successfully!",
         });
+        // Update the stock quantity of the product
+      //   const response = await fetch('/api/products', {
+      //     method: 'PUT',
+      //     headers: {
+      //         'Content-Type': 'application/json',
+      //     },
+      //     body: JSON.stringify({
+      //         productId: product.id, // Replace with the actual product ID
+      //         stock: 20     // New stock quantity
+      //     }),
+      // });
+      
+      // if (!response.ok) {
+      //     const errorData = await response.json();
+      //     throw new Error(`Failed to update product stock: ${errorData.error || 'Unknown error'}`);
+      // }
+      
+      // const updatedProduct = await response.json();
+      // console.log('Updated product:', updatedProduct);
+       
       }
-  
-      console.log("Order and order items created successfully!");
+
+      // Now, delete the cart items
+      const deleteCartItemsResponse = await fetch("/api/cartItem", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cartId: cartId,
+        }),
+      });
+      if (!deleteCartItemsResponse.ok) {
+        const errorData = await deleteCartItemsResponse.json();
+        throw new Error(`Failed to delete cart items: ${errorData.error || "Unknown error"}`);
+      }
+      
       toast({
         title: "Your order was successfully sent!",
       });
@@ -181,8 +217,32 @@ export function Checkout() {
     handleCreate();
   };
   
-  
-  
+  // to delete the cart item once the order completed I should : 
+  // get the sessionID
+  // 1- get the cart ID using session Id 
+  // 2- get the cart items using the cart ID
+  // 3- minus the quantity of the product from the product table using the cart items table (productId)
+  // 4- delete the cart items
+  const [cartId, setCartId] = useState(0);
+  useEffect(() => {
+    // Fetch cart data when the component mounts
+    const fetchCart = async () => {
+      try {
+        const cart1 = await getCart(SessionId);
+        if (cart1 && cart1.length > 0) {
+          const cartId = cart1[0].id;
+          console.log("cartId", cartId);
+          setCartId(cartId);
+        }
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+      }
+    };
+
+    fetchCart();
+  }, [SessionId]); // Dependency array: runs when SessionId changes
+
+
   
   return (
     <div className="container mx-auto max-w-4xl py-12 px-4 md:px-6">

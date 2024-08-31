@@ -53,23 +53,28 @@ export async function POST(req) {
 
 export async function DELETE(req) {
     try {
-        // Parse the request body to get cartItemId
-        const { id } = await req.json();
-        
-        // Validate input data
-        if (!id) {
-            return NextResponse.json({ error: 'Cart Item ID is required.' }, { status: 400 });
+        // Parse the request body
+        const { cartItemId, cartId } = await req.json();
+
+        if (cartItemId) {
+            // If cartItemId is provided, delete the single CartItem
+            const deletedCartItem = await prisma.cartItem.delete({
+                where: { id: cartItemId },
+            });
+            return NextResponse.json(deletedCartItem, { status: 200 });
+        } else if (cartId) {
+            // If cartId is provided, delete all CartItems associated with that cartId
+            const deleteResult = await prisma.cartItem.deleteMany({
+                where: { cartId: cartId },
+            });
+            return NextResponse.json({ message: `${deleteResult.count} cart items deleted.` }, { status: 200 });
+        } else {
+            // If neither cartItemId nor cartId is provided, return an error
+            return NextResponse.json({ error: 'Cart Item ID or Cart ID is required.' }, { status: 400 });
         }
 
-        // Delete the CartItem
-        const cartItem = await prisma.cartItem.delete({
-            where: { id:id }
-        });
-
-        return NextResponse.json(cartItem); // Return deleted CartItem
-
     } catch (error) {
-        console.error('Error deleting cart item:', error);
+        console.error('Error deleting cart item(s):', error);
         return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
     }
 }

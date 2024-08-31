@@ -126,7 +126,7 @@ useEffect(() => {
 }, [cartItem]); // Dependency array: runs when cartItem changes
 
 
-const handleDelete = async (id : Number) => {
+const handleDelete = async (cartItemId : Number) => {
   try {
    
     const response = await fetch('/api/cartItem', {
@@ -134,12 +134,12 @@ const handleDelete = async (id : Number) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id }),
+      body: JSON.stringify({ cartItemId }),
     });
 
     if (response.ok) {
       console.log("Item deleted from the cart");
-      setProductDetails(productDetails.filter((item) => item.cartItem !== id))
+      setProductDetails(productDetails.filter((item) => item.cartItem !== cartItemId))
       toast({
         title: "Item deleted from the cart succesfully",
       })
@@ -147,7 +147,7 @@ const handleDelete = async (id : Number) => {
       const errorData = await response.json(); // Fetch error details
       console.error("Failed to delete item from cart");
       toast({
-        title: `Failed to delete item with id ${id} from cart`,
+        title: `Failed to delete item with id ${cartItemId} from cart`,
         description: errorData.error || "An unexpected error occurred", // Show error details if available
       });
     }
@@ -204,42 +204,49 @@ const encodedProductDetails = encodeURIComponent(serializedProductDetails);
           <DrawerDescription>Review and update the items in your cart.</DrawerDescription>
         </DrawerHeader>
         <div className="flex-1 overflow-auto">
-          <div className="grid gap-4 p-4">
-            {productDetails.map((item) => (
-              <div key={item.id} className="grid grid-cols-[80px_1fr_auto] items-center gap-4">
-                <img
-                  src={item.picture1 ?? ""}
-                  alt={item.name}
-                  width={80}
-                  height={80}
-                  className="rounded-md object-cover"
-                />
-                <div className="grid gap-1">
-                  <h4 className="font-medium">{item.name}</h4>
-                  <p className="text-sm text-muted-foreground">{item.price.toFixed(2)} DA</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    disabled={item.quantity === 1}
-                  >
-                    <MinusIcon className="h-4 w-4" />
-                  </Button>
-                  <span className="text-sm font-medium">{item.quantity}</span>
-                  <Button variant="ghost" size="icon" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
-                    <PlusIcon className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.cartItem)}>
-                    <Trash2Icon className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="w-72 text-sm sm:w-80 text-red-600 font-semibold">{quantityErrors[item.id]}</p>
-              </div>
-            ))}
+  {productDetails.length === 0 ? (
+    <div className="p-4 text-center">
+      <p className="text-lg font-medium text-gray-600">Your cart is empty</p>
+    </div>
+  ) : (
+    <div className="grid gap-4 p-4">
+      {productDetails.map((item) => (
+        <div key={item.id} className="grid grid-cols-[80px_1fr_auto] items-center gap-4">
+          <img
+            src={item.picture1 ?? ""}
+            alt={item.name}
+            width={80}
+            height={80}
+            className="rounded-md object-cover"
+          />
+          <div className="grid gap-1">
+            <h4 className="font-medium">{item.name}</h4>
+            <p className="text-sm text-muted-foreground">{item.price.toFixed(2)} DA</p>
           </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+              disabled={item.quantity === 1}
+            >
+              <MinusIcon className="h-4 w-4" />
+            </Button>
+            <span className="text-sm font-medium">{item.quantity}</span>
+            <Button variant="ghost" size="icon" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+              <PlusIcon className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.cartItem)}>
+              <Trash2Icon className="h-4 w-4" />
+            </Button>
+          </div>
+          <p className="w-72 text-sm sm:w-80 text-red-600 font-semibold">{quantityErrors[item.id]}</p>
         </div>
+      ))}
+    </div>
+  )}
+</div>
+
         <DrawerFooter className="border-t">
           <div className="flex items-center justify-between">
             <span className="text-lg font-medium">Total</span>

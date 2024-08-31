@@ -86,7 +86,7 @@ export function ProductsTable(products) {
   return (
     <div className="flex flex-col h-full w-full">
       <header className="bg-muted/40 p-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Products</h1>
+        <p className="text-2xl font-bold">Products</p>
         <div className="flex items-center gap-4">
           <Input
             type="text"

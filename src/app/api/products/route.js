@@ -48,3 +48,31 @@ export async function DELETE(req) {
 }
 
 
+export async function PUT(req) {
+  try {
+      // Parse the request body to get productId and new stock quantity
+      const { productId, stock } = await req.json();
+      
+      // Validate input data
+      if (typeof productId !== 'number' || typeof stock !== 'number' || stock < 0) {
+          return NextResponse.json(
+              { error: 'Invalid productId or stock quantity. Stock must be a non-negative integer.' },
+              { status: 400 }
+          );
+      }
+
+      // Update the product stock
+      const updatedProduct = await prisma.product.update({
+          where: { id: productId },
+          data: { stock },
+      });
+
+      // Return the updated product
+      return NextResponse.json(updatedProduct);
+
+  } catch (error) {
+      console.error('Error updating product stock:', error);
+      return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
+  }
+}
+

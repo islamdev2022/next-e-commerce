@@ -28,19 +28,24 @@ import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 import { Label } from "@/components/ui/label"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-import { JSX, SVGProps,useState,useEffect } from "react"
+import { JSX, SVGProps,useState,useEffect, SetStateAction } from "react"
 import { getCart } from "@/app/actions"
 import { useToast } from "@/components/ui/use-toast"
-export function ProductDescription ({ product,sessionId }: { product: { id: string, picture1: string, picture2: string, picture3: string ,  title: string, description: string, price: number, anime:string } ;sessionId: string }) {
+import ProductNotFound from "@/components/component/product-not-found"
+export function ProductDescription ({ product,sessionId }: { product: { id: number, picture1: string, picture2: string, picture3: string ,  title: string, description: string, price: number, anime:string } ;sessionId: string }) {
   if (!product) {
-    console.log("productezerzes");
-    return <div>Product not found</div>;
+    return <ProductNotFound/>
   }
-  console.log("product", product);
   if (product.title === '') {
-    return <div className="table mx-auto">Product not found</div>;
+    return <ProductNotFound/>
   }
   const [cartId, setCartId] = useState(0);
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+
+  // Handle the change event to update the selected quantity
+  const handleQuantityChange = (value: string) => {
+    setSelectedQuantity(Number(value));
+  };
   useEffect(() => {
     // Fetch cart data when the component mounts
     const fetchCart = async () => {
@@ -68,7 +73,7 @@ export function ProductDescription ({ product,sessionId }: { product: { id: stri
       },
       body: JSON.stringify({
         productId: product.id,
-        quantity: 1,
+        quantity:Number(selectedQuantity),
         cartId: cartId,
       }),
     });
@@ -80,7 +85,7 @@ export function ProductDescription ({ product,sessionId }: { product: { id: stri
     } else {
       console.error("Failed to add item to cart");
       toast({
-        title: "Item Already in Cart",
+        title: "Item Already in",
       })
     }
   }
@@ -102,9 +107,6 @@ export function ProductDescription ({ product,sessionId }: { product: { id: stri
                   alt="Product Image"
                   className="aspect-square object-cover w-full rounded-lg overflow-hidden group-hover:scale-110 transition-transform"
                 />
-                <div className="absolute inset-0  flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ZoomInIcon className="w-10 h-10 text-white" />
-                </div>
               </div>
             </CarouselItem>
             <CarouselItem>
@@ -116,9 +118,7 @@ export function ProductDescription ({ product,sessionId }: { product: { id: stri
                   alt="Product Image"
                   className="aspect-square object-cover w-full rounded-lg overflow-hidden group-hover:scale-110 transition-transform"
                 />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ZoomInIcon className="w-10 h-10 text-white" />
-                </div>
+                
               </div>
             </CarouselItem>
             <CarouselItem>
@@ -130,9 +130,6 @@ export function ProductDescription ({ product,sessionId }: { product: { id: stri
                   alt="Product Image"
                   className="aspect-square object-cover w-full rounded-lg overflow-hidden group-hover:scale-110 transition-transform"
                 />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ZoomInIcon className="w-10 h-10 text-white" />
-                </div>
               </div>
             </CarouselItem>
           </CarouselContent>
@@ -165,7 +162,7 @@ export function ProductDescription ({ product,sessionId }: { product: { id: stri
             <Label htmlFor="quantity" className="text-base">
               Quantity
             </Label>
-            <Select defaultValue="1">
+            <Select value={selectedQuantity.toString()} onValueChange={handleQuantityChange}>
               <SelectTrigger className="w-24">
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
@@ -204,24 +201,3 @@ function StarIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   )
 }
 
-function ZoomInIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" x2="16.65" y1="21" y2="16.65" />
-      <line x1="11" x2="11" y1="8" y2="14" />
-      <line x1="8" x2="14" y1="11" y2="11" />
-    </svg>
-  )
-}

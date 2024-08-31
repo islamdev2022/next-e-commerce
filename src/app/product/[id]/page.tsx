@@ -9,7 +9,7 @@ export default async function Page({ params }: { params: Params }) {
   console.log("product" , product);
 
     const details = {
-      id: product?.id?.toString() ?? '',
+      id: Number(product?.id) ?? '',
       picture1: product?.picture1 ?? '',
       picture2: product?.picture2 ?? '',
       picture3: product?.picture3 ?? '',
