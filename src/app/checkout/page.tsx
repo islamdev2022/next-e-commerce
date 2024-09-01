@@ -12,7 +12,6 @@ if (posthogCookie && posthogCookie.value) {
   // Step 3: Access the session ID from the `$sesid` array
   const sessionId = posthogData?.$sesid?.[1];
 
-  console.log('Session ID:', sessionId);
   return (
  
   <div>

@@ -11,18 +11,6 @@ const  dashboard = async () => {
     redirect("api/auth/signin");
   }
     const products = await prisma.product.findMany();
-
-    products.map((product) => {
-      console.log(product)
-    })
-
-    
-    const allorders = await prisma.order.findMany({});
-
-
-    allorders.map((order) => {
-      console.log(order)
-    })
     return ( 
     <>
     <div className='flex items-center justify-center gap-6'>
@@ -31,7 +19,6 @@ const  dashboard = async () => {
     </div>
     
     <div className="flex flex-wrap items-center justify-between sm:px-12 my-10">
-
           <ProductsTable products={products}
           />
           <OrdersTable />

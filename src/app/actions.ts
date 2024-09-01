@@ -15,28 +15,6 @@ export const getProduct = async (id: number) => {
   return product;
 };
 
-export const AddProduct = async (req: { json: () => any; }) => {
-  const body = await req.json();
-
-  try {
-    const newProduct = await prisma.product.create({
-      data: {
-        name: body.name,
-        description: body.description,
-        price: body.price,
-        stock: body.stock,
-        picture1: body.picture1,
-        picture2: body.picture2,
-        picture3: body.picture3,
-        anime: body.anime,
-      },
-    });
-    return newProduct;
-  } catch (error) {
-    return error;
-  }
-}
-
 import crypto from 'crypto';
 
 export const deleteImageFromCloudinary = async (publicId: string | Blob) => {

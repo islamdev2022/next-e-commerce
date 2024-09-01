@@ -6,8 +6,6 @@ import { cookies } from 'next/headers';
 export default async function Page({ params }: { params: Params }) {
 
     const product = await getProduct(params.id);
-  console.log("product" , product);
-
     const details = {
       id: Number(product?.id) ?? '',
       picture1: product?.picture1 ?? '',
@@ -21,7 +19,6 @@ export default async function Page({ params }: { params: Params }) {
     };
     
     const cookieStore = cookies()
-  console.log("cookies");
   const posthogCookie = cookieStore.get('ph_phc_JHXDEpCWQRLpHDZe6tMJdo4lVl62hy1P8n13cvMcqDU_posthog');
 
 if (posthogCookie && posthogCookie.value) {
@@ -29,10 +26,7 @@ if (posthogCookie && posthogCookie.value) {
   const posthogData = JSON.parse(posthogCookie.value);
 
   // Step 3: Access the session ID from the `$sesid` array
-  const sessionId = posthogData?.$sesid?.[1];
-
-  console.log('Session ID:', sessionId);
-  
+  const sessionId = posthogData?.$sesid?.[1];  
     return (
     
     <div className='flex flex-col justify-center h-[90vh]'>

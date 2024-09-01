@@ -3,7 +3,6 @@
 
 import React, { useEffect } from 'react';
 import { ProductCardC } from "./component/product-card-c";
-import { Checkout } from "./component/checkout";
 import { getProducts } from "@/app/actions";
 
 interface ProductCardsProps {

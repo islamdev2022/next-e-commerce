@@ -31,17 +31,6 @@ export default async function RootLayout({
 }>) {
   const session = await getServerSession();
 
-  const cookieStore = cookies()
-  console.log("cookies");
-  const posthogCookie = cookieStore.get('ph_phc_JHXDEpCWQRLpHDZe6tMJdo4lVl62hy1P8n13cvMcqDU_posthog');
-
-  // Step 2: Parse the JSON string
-  const posthogData = posthogCookie ? JSON.parse(posthogCookie.value) : null;
-
-  // Step 3: Access the session ID from the `$sesid` array
-  const sessionId = posthogData?.$sesid?.[1];
-
-  console.log('Session ID:', sessionId);
   return (
     <html lang="en">
       <body 
