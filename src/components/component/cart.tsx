@@ -13,6 +13,7 @@ export function Cart({SessionId}: {SessionId: string}) {
 
   const [cartItem, setCartItem] = useState<{ id: number; cartId: number; productId: number; quantity: number; }[]>([]);
   const [cartId, setCartId] = useState(0);
+  const [loading, setLoading] = useState(false); // Loading state
   const { toast } = useToast()
   useEffect(() => {
     // Fetch cart data when the component mounts
@@ -23,6 +24,7 @@ export function Cart({SessionId}: {SessionId: string}) {
           const cartId = cart1[0].id;
           setCartId(cartId);
         }else{
+          setLoading(true);
           try{
             const cartResponse = await fetch("/api/cart" , {
               method : "POST",
@@ -43,6 +45,8 @@ export function Cart({SessionId}: {SessionId: string}) {
         }
       } catch (error) {
         console.error("Error fetching cart:", error);
+      }finally{
+        setLoading(false);
       }
     };
 
@@ -198,9 +202,7 @@ const encodedProductDetails = encodeURIComponent(serializedProductDetails);
           <img
             src={item.picture1 ?? ""}
             alt={item.name}
-            width={80}
-            height={80}
-            className="rounded-md object-cover"
+            className="rounded-md object-contain w-16 h-16"
           />
           <div className="grid gap-1">
             <h4 className="font-medium">{item.name}</h4>
@@ -234,11 +236,9 @@ const encodedProductDetails = encodeURIComponent(serializedProductDetails);
             <span className="text-lg font-medium">Total</span>
             <span className="text-lg font-medium">{total.toFixed(2)} DA</span>
           </div>
-          <Button className={`mt-4 w-full ${productDetails.length < 1 ? " cursor-not-allowed" : ""}`}>
           <Link href={`/checkout?items=${encodedProductDetails}`}>
-          Checkout
+          <Button className="mt-4 w-full">Checkout</Button>
         </Link>
-        </Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

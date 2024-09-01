@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -6,11 +6,14 @@ import Link from "next/link";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { toast } from "../ui/use-toast";
 
-export function ProductsTable(products) {
+export function ProductsTable({ products: initialProducts }) {
+  // State to manage products
+  const [products, setProducts] = useState(initialProducts);
+
   // Introduce a state to manage stock values for each product
   const [stocks, setStocks] = useState(() => {
     const initialStocks = {};
-    products.products.forEach(product => {
+    products.forEach(product => {
       initialStocks[product.id] = product.stock;
     });
     return initialStocks;
@@ -27,10 +30,12 @@ export function ProductsTable(products) {
       });
   
       if (response.ok) {
+        // Remove the deleted product from the state
+        setProducts(prevProducts => prevProducts.filter(product => product.id !== id));
         toast({
           title: 'Product deleted successfully',
           description: 'success',
-        })
+        });
       } else {
         console.error('Failed to delete the product');
       }
@@ -53,7 +58,7 @@ export function ProductsTable(products) {
           title: 'Stock updated successfully',
           description: 'success',
         });
-        }
+      }
     } catch (error) {
       console.error('Error updating product stock:', error);
     }
@@ -83,11 +88,11 @@ export function ProductsTable(products) {
   const [sortDirection, setSortDirection] = useState("asc");
   const [filterText, setFilterText] = useState("");
 
-  const filteredProducts = Array.isArray(products.products) ? products.products.filter(
+  const filteredProducts = products.filter(
     (product) =>
       product.name.toLowerCase().includes(filterText.toLowerCase()) ||
       product.description.toLowerCase().includes(filterText.toLowerCase())
-  ) : [];
+  );
 
   const sortedProducts = filteredProducts.sort((a, b) => {
     if (a[sortColumn] < b[sortColumn]) return sortDirection === "asc" ? -1 : 1;
@@ -158,7 +163,7 @@ export function ProductsTable(products) {
             {sortedProducts.map((product) => (
               <TableRow key={product.id}>
                 <TableCell className="font-medium">
-                  <img src={product.picture1} alt="" className="w-10 h-10" />
+                  <img src={product.picture1} alt="" className="w-10 h-10 object-contain" />
                 </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell>{product.description}</TableCell>

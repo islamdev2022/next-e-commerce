@@ -35,9 +35,9 @@ export default function SignInCmp() {
    
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center items-center h-screen">
       <form
-        className="bg-white dark:bg-zinc-900 shadow-2xl rounded-2xl overflow-hidden border-4 border-blue-400 dark:border-blue-800"
+        className="bg-white dark:bg-zinc-900 shadow-2xl rounded-2xl overflow-hidden border-4 border-gray-500 dark:border-blue-800"
         onSubmit={handleSignIn}>
         <div className="px-8 py-10 md:px-10">
             

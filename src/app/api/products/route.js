@@ -3,26 +3,37 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function POST(req) {
-    const body = await req.json();
+  const body = await req.json();
   
-    try {
-      const newProduct = await prisma.product.create({
-        data: {
-          name: body.name,
-          description: body.description,
-          price: body.price ? parseFloat(body.price) : 0,
-          stock: body.stock ? parseInt(body.stock, 10) : 0,
-          picture1: body.picture1,
-          picture2: body.picture2,
-          picture3: body.picture3,
-          anime: body.anime,
-        },
-      });
-      return NextResponse.json(newProduct);
-    } catch (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+  // Parse price and stock to numbers
+  const price = parseFloat(body.price);
+  const stock = parseInt(body.stock, 10);
+
+  console.log('Received data:', {
+    ...body,
+    price,
+    stock,
+  });
+
+  try {
+    const newProduct = await prisma.product.create({
+      data: {
+        name: body.name,
+        description: body.description,
+        price: isNaN(price) ? 0 : price, // Handle case where price might not be a valid number
+        stock: isNaN(stock) ? 0 : stock, // Handle case where stock might not be a valid number
+        picture1: body.picture1,
+        picture2: body.picture2,
+        picture3: body.picture3,
+        anime: body.anime,
+      },
+    });
+    return NextResponse.json(newProduct);
+  } catch (error) {
+    console.error('Error creating product:', error); // Log detailed error
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
+}
 
 
 export async function GET() {

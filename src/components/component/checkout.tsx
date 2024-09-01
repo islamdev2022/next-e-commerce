@@ -36,7 +36,7 @@ import { useEffect, useState } from "react";
 import wilayas from '@/wilayas.json';
 import { useToast } from "../ui/use-toast";
 import { getCart } from "@/app/actions";
-import { getCartItem } from "@/app/actions";
+import { useRouter } from "next/navigation";
 export function Checkout({SessionId}: {SessionId: string}) {
   interface Product {
     id: string;
@@ -44,6 +44,9 @@ export function Checkout({SessionId}: {SessionId: string}) {
     price: number;
     quantity: number;
   }
+const router = useRouter();
+const [seconds, setSeconds] = useState<number>(2); // State for countdown
+  const [showMessage, setShowMessage] = useState<boolean>(false); // State for showing the redirection message
 
   // State to manage form inputs and product details
   const [formState, setFormState] = useState({
@@ -58,7 +61,7 @@ export function Checkout({SessionId}: {SessionId: string}) {
     total: 0,  // Add total to formState
   });
   
-
+  const [loading, setLoading] = useState(false); // Loading state
   // Shipping cost
   const shipping = 500;
 
@@ -105,6 +108,7 @@ export function Checkout({SessionId}: {SessionId: string}) {
 
   const { toast } = useToast()
   const handleCreate = async () => {
+    setLoading(true); // Start loading
     try {
       // Create the order first
       const orderResponse = await fetch("/api/order", {
@@ -185,6 +189,22 @@ export function Checkout({SessionId}: {SessionId: string}) {
         title: `Order creation failed `,
         description: `${error as string}`,
       });
+    } finally{
+      setLoading(false); // Stop loading
+      // Show redirection message
+      setShowMessage(true);
+
+      // Start countdown
+      const timer = setInterval(() => {
+        setSeconds((prevSeconds) => {
+          if (prevSeconds <= 1) {
+            clearInterval(timer);
+            router.push("/"); // Replace with your target route
+          }
+          return prevSeconds - 1;
+        });
+      }, 1000);
+    
     }
   };
   
@@ -348,8 +368,8 @@ export function Checkout({SessionId}: {SessionId: string}) {
 
           
         </form>
-        <Button className="w-full" onClick={handleSubmit}>
-            Place Order
+        <Button className="w-full" onClick={handleSubmit} disabled={loading}>
+        {loading ? "Processing..." : "Place Order"}
           </Button>
       </div>
 
@@ -392,6 +412,11 @@ export function Checkout({SessionId}: {SessionId: string}) {
         </Card>
       </div>
     </div>
+    {showMessage && (
+        <div className="fixed bottom-4 right-4 p-4 bg-blue-500 text-white rounded">
+          <p>You will be redirected in {seconds} seconds...</p>
+        </div>
+      )}
   </div>
   );
 }

@@ -17,6 +17,8 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
   }
   const [cartId, setCartId] = useState(0);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [loading, setLoading] = useState(false); // Loading state
+
 
   // Handle the change event to update the selected quantity
   const handleQuantityChange = (value: string) => {
@@ -40,6 +42,7 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
   }, [sessionId]);
   const { toast } = useToast()
   const handleCreate = async () => {
+    setLoading(true)
     const res = await fetch("/api/cartItem", {
       method: "POST",
       
@@ -53,13 +56,14 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
       }),
     });
     if (res.ok) {
+      setLoading(false)
       toast({
         title: "Item Added to Cart succesfully",
       })
     } else {
       console.error("Failed to add item to cart");
       toast({
-        title: "Item Already in",
+        title: "Item Already in Cart",
       })
     }
   }
@@ -70,7 +74,7 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
   return (
     <div className="flex flex-col h-full">
       <Header sessionId={sessionId} />
-      <div className="max-w-6xl px-4 mx-auto py-6 space-y-8 ">
+      <div className="max-w-6xl px-4 mx-auto py-6 space-y-8 flex justify-center items-center h-screen ">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-12 items-start">
           <div className="grid gap-4 md:gap-8">
             <Carousel className="w-full max-w-md mx-auto">
@@ -83,7 +87,7 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
                         width={600}
                         height={600}
                         alt={`Product Image ${index + 1}`}
-                        className="aspect-square object-cover w-full rounded-lg overflow-hidden group-hover:scale-110 transition-transform"
+                        className="aspect-square object-contain w-full rounded-lg overflow-hidden group-hover:scale-110 transition-transform"
                       />
                     </div>
                   </CarouselItem>
@@ -108,7 +112,7 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
                 <p className="font-semibold">{product.anime}</p>
               </div>
               <div>
-                <p className="text-sm sm:text-base">{product.description}</p>
+                <p className="text-sm sm:text-base ">{product.description}</p>
               </div>
             </div>
             <form className="grid gap-4 md:gap-10">
@@ -127,7 +131,10 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
                   </SelectContent>
                 </Select>
               </div>
-              <Button size="lg" onClick={handleSubmit} className="w-full sm:w-auto">Add to cart</Button>
+              <Button size="lg" onClick={handleSubmit} className="w-full sm:w-auto"disabled={loading}
+          >
+            {loading ? "Processing..." : "Add to cart" }
+          </Button>
             </form>
           </div>
         </div>

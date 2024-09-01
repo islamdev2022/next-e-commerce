@@ -7,6 +7,7 @@ import { useState,useEffect } from "react"
 import { useToast } from "@/components/ui/use-toast"
 export function ProductCardC({img, title, description, price ,className,id,sessionId}: {img: string, title: string, description: string, price: number,className:string,id:Number,sessionId:string}) {
   const [cartId, setCartId] = useState(0);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     // Fetch cart data when the component mounts
     const fetchCart = async () => {
@@ -44,6 +45,7 @@ export function ProductCardC({img, title, description, price ,className,id,sessi
 
   const { toast } = useToast()
   const handleCreate = async () => {
+    setLoading(true);
     const res = await fetch("/api/cartItem", {
       method: "POST",
       
@@ -57,6 +59,7 @@ export function ProductCardC({img, title, description, price ,className,id,sessi
       }),
     });
     if (res.ok) {
+      setLoading(false);
       toast({
         title: "Item Added to Cart succesfully",
       })
@@ -72,13 +75,13 @@ export function ProductCardC({img, title, description, price ,className,id,sessi
     handleCreate();
   };
   return (
-    <Card className={`w-72 max-w-sm overflow-hidden rounded-lg shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl ${className} `}>
+    <Card className={`w-72 h-fit max-w-sm overflow-hidden rounded-lg shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl ${className} `}>
       <Link href={`/product/${id}`} className="block" >
         <img
           src={img}
           alt="Product Image"
          
-          className="h-[300px] w-full "
+          className="h-[300px] w-full object-contain"
         />
       </Link>
       <CardContent className="p-4">
@@ -86,16 +89,16 @@ export function ProductCardC({img, title, description, price ,className,id,sessi
           <Link href={`/product/${id}`} className="block" >
             <h3 className="text-lg font-bold text-black">{title}</h3>
           </Link>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground truncate">
             {description}
           </p>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-2xl font-bold text-primary">{price}DZD</span>
           <Button variant="outline" size="sm"
-            onClick={handleSubmit}
+            onClick={handleSubmit} disabled={loading}
           >
-            Add to Cart
+            {loading ? "Processing..." : "Add to cart" }
           </Button>
         </div>
       </CardContent>
