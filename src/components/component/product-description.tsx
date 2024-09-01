@@ -9,16 +9,11 @@ import { useToast } from "@/components/ui/use-toast"
 import ProductNotFound from "@/components/component/product-not-found"
 import Header from "../Header"
 export function ProductDescription ({ product,sessionId }: { product: { id: number, picture1: string, picture2: string, picture3: string ,  title: string, description: string, price: number, anime:string } ;sessionId: string }) {
-  if (!product) {
-    return <ProductNotFound/>
-  }
-  if (product.title === '') {
-    return <ProductNotFound/>
-  }
+
   const [cartId, setCartId] = useState(0);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [loading, setLoading] = useState(false); // Loading state
-
+  const { toast } = useToast()
 
   // Handle the change event to update the selected quantity
   const handleQuantityChange = (value: string) => {
@@ -40,7 +35,7 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
 
     fetchCart();
   }, [sessionId]);
-  const { toast } = useToast()
+
   const handleCreate = async () => {
     setLoading(true)
     const res = await fetch("/api/cartItem", {
@@ -71,6 +66,12 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
     e.preventDefault();
     handleCreate();
   };
+    if (!product) {
+    return <ProductNotFound/>
+  }
+  if (product.title === '') {
+    return <ProductNotFound/>
+  }
   return (
     <div className="flex flex-col h-full">
       <Header sessionId={sessionId} />

@@ -78,7 +78,7 @@ export default function SignInCmp() {
                 className="w-full px-4 py-3 tracking-wide text-white transition-colors duration-200 transform bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg hover:from-blue-700 hover:to-cyan-700 focus:outline-none focus:ring-4 focus:ring-blue-400 dark:focus:ring-blue-800"
                 type="submit"
               >
-                Let's Go
+                Let&apos;s Go
               </button>
             </div>
           </div>

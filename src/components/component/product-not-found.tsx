@@ -11,7 +11,7 @@ export default function ProductNotFound() {
       <PackageSearch className="w-16 h-16 text-muted-foreground mb-4" />
       <h1 className="text-4xl font-bold mb-2">Product Not Found</h1>
       <p className="text-xl text-muted-foreground mb-8">
-        We're sorry, but the product you're looking for doesn't seem to exist or out of stock.
+        We&apos;re sorry, but the product you&apos;re looking for doesn&apos;t seem to exist or out of stock.
       </p>
       <div className="w-full max-w-md mb-8">
         <form className="flex w-full max-w-sm items-center space-x-2">
