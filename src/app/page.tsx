@@ -25,6 +25,12 @@ if (posthogCookie && posthogCookie.value) {
   );
 } else {
   console.log('Session ID not found');
+  return (
+    <main className="">
+      <p>No session available. Please sign in.</p>
+    </main>
+  );
+
 }
   
 }
