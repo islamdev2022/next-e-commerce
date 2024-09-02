@@ -43,7 +43,7 @@ const Header = ({ sessionId }: { sessionId: any }) => {
 
   return (
     <>
-      <div className='flex mt-6 justify-between gap-2 px-3 sm:px-10 w-full'>
+      <div className='flex mt-6 justify-between gap-2 px-3 sm:px-10 w-full sticky top-0 pb-5 bg-white shadow-xl  z-10'>
         <Link href="/" className='relative top-4 h-fit'>
           <img src="/assets/next.svg" alt="Logo" className=' object-cover w-20' />
         </Link>
