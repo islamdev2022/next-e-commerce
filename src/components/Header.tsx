@@ -4,7 +4,7 @@ import { PlaceholdersAndVanishInput } from './ui/placeholders-and-vanish-input';
 import { Cart } from './component/cart';
 import { getProducts } from "@/app/actions";
 import Link from 'next/link';
-
+import Image from 'next/image';
 const Header = ({ sessionId }: { sessionId: any }) => {
   // State for storing products fetched from the server
   const [products, setProducts] = useState<{ id: number; name: string; description: string | null; price: number; stock: number; picture1: string | null; picture2: string | null; picture3: string | null; anime: string | null; createdAt: Date; }[]>([]);
@@ -43,9 +43,9 @@ const Header = ({ sessionId }: { sessionId: any }) => {
 
   return (
     <>
-      <div className='flex mt-6 justify-between gap-2 px-3 sm:px-10 w-full sticky top-0 pb-5 bg-white shadow-xl  z-10'>
+      <div className='flex  justify-between gap-2 px-3 sm:px-10 w-full sticky top-0 py-3 bg-white shadow-xl  z-10 rounded-xl'>
         <Link href="/" className='relative top-4 h-fit'>
-          <img src="/assets/next.svg" alt="Logo" className=' object-cover w-20' />
+          <Image src="/assets/next.svg" alt="Logo" className=' object-cover w-20' width={500} height={300} />
         </Link>
         <div className='w-2/3'>
           <PlaceholdersAndVanishInput
@@ -54,13 +54,13 @@ const Header = ({ sessionId }: { sessionId: any }) => {
           onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()}  // Prevent default form submission
         />      <div className="">
         {filteredProducts.length > 0 || !searchInput ? (
-          <ul className=" mx-auto table overflow-scroll w-full">
+          <ul className=" mx-auto table overflow-scroll w-full bg-gray-50 px-5  rounded-2xl">
             {filteredProducts.map((product) => (
-              <li key={product.id} className="py-2 border-b    w-full">
+              <li key={product.id} className="py-2 border-b hover:bg-gray-100   w-full">
                 <Link href={`/product/${product.id}`} className="items-center  flex justify-between w-full" >
                 <h3 className="font-bold">{product.name}</h3>
                 <p className='text-xs text-gray-600'>{product.anime}</p>
-                <img src={product.picture1 ?? ''} alt="" className='w-6'/>
+                <Image src={product.picture1 ?? ''} alt={product.name} className='w-6 object-contain' width={500} height={300}/>
                 </Link>
               </li>
             ))}

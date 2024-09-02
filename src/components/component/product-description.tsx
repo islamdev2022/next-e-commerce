@@ -8,6 +8,7 @@ import { getCart } from "@/app/actions"
 import { useToast } from "@/components/ui/use-toast"
 import ProductNotFound from "@/components/component/product-not-found"
 import Header from "../Header"
+import Image from "next/image"
 export function ProductDescription ({ product,sessionId }: { product: { id: number, picture1: string, picture2: string, picture3: string ,  title: string, description: string, price: number, anime:string } ;sessionId: string }) {
 
   const [cartId, setCartId] = useState(0);
@@ -83,7 +84,7 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
                 {[product.picture1, product.picture2, product.picture3].map((picture, index) => (
                   <CarouselItem key={index}>
                     <div className="relative group">
-                      <img
+                      <Image
                         src={picture}
                         width={600}
                         height={600}

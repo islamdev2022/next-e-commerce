@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { toast } from "../ui/use-toast";
-
+import Image from "next/image";
 export function ProductsTable({ products: initialProducts }) {
   // State to manage products
   const [products, setProducts] = useState(initialProducts);
@@ -163,7 +163,7 @@ export function ProductsTable({ products: initialProducts }) {
             {sortedProducts.map((product) => (
               <TableRow key={product.id}>
                 <TableCell className="font-medium">
-                  <img src={product.picture1} alt="" className="w-10 h-10 object-contain" />
+                  <Image width={500} height={300} src={product.picture1} alt="" className="w-10 h-10 object-contain" />
                 </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell>{product.description}</TableCell>

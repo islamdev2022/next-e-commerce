@@ -9,11 +9,11 @@ import { getCartItem } from "@/app/actions"
 import { getProduct } from "@/app/actions"
 import { useToast } from "@/components/ui/use-toast"
 import Link from "next/link"
+import Image from "next/image"
 export function Cart({SessionId}: {SessionId: string}) {
 
   const [cartItem, setCartItem] = useState<{ id: number; cartId: number; productId: number; quantity: number; }[]>([]);
   const [cartId, setCartId] = useState(0);
-  const [loading, setLoading] = useState(false); // Loading state
   const { toast } = useToast()
   useEffect(() => {
     // Fetch cart data when the component mounts
@@ -24,7 +24,6 @@ export function Cart({SessionId}: {SessionId: string}) {
           const cartId = cart1[0].id;
           setCartId(cartId);
         }else{
-          setLoading(true);
           try{
             const cartResponse = await fetch("/api/cart" , {
               method : "POST",
@@ -45,8 +44,6 @@ export function Cart({SessionId}: {SessionId: string}) {
         }
       } catch (error) {
         console.error("Error fetching cart:", error);
-      }finally{
-        setLoading(false);
       }
     };
 
@@ -199,10 +196,11 @@ const encodedProductDetails = encodeURIComponent(serializedProductDetails);
     <div className="grid gap-4 p-4">
       {productDetails.map((item) => (
         <div key={item.id} className="grid grid-cols-[80px_1fr_auto] items-center gap-4">
-          <img
+          <Image
             src={item.picture1 ?? ""}
             alt={item.name}
             className="rounded-md object-contain w-16 h-16"
+            width={500} height={300}
           />
           <div className="grid gap-1">
             <h4 className="font-medium">{item.name}</h4>

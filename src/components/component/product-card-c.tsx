@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { getCart } from "@/app/actions"
 import { useState,useEffect } from "react"
 import { useToast } from "@/components/ui/use-toast"
+import Image from "next/image"
 export function ProductCardC({img, title, description, price ,className,id,sessionId}: {img: string, title: string, description: string, price: number,className:string,id:Number,sessionId:string}) {
   const [cartId, setCartId] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -77,10 +78,10 @@ export function ProductCardC({img, title, description, price ,className,id,sessi
   return (
     <Card className={`w-72 h-fit max-w-sm overflow-hidden rounded-lg shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl ${className} `}>
       <Link href={`/product/${id}`} className="block" >
-        <img
+        <Image
           src={img}
           alt="Product Image"
-         
+          width={500} height={300}
           className="h-[300px] w-full object-contain"
         />
       </Link>
