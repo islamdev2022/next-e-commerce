@@ -5,8 +5,8 @@ import { Cart } from './component/cart';
 import { getProducts } from "@/app/actions";
 import Link from 'next/link';
 import Image from 'next/image';
-const Header = ({ sessionId }: { sessionId: any }) => {
-  // State for storing products fetched from the server
+const Header = () => {
+
   const [products, setProducts] = useState<{ id: number; name: string; description: string | null; price: number; stock: number; picture1: string | null; picture2: string | null; picture3: string | null; anime: string | null; createdAt: Date; }[]>([]);
   
   // State for storing the search input and the filtered products
@@ -71,7 +71,7 @@ const Header = ({ sessionId }: { sessionId: any }) => {
       </div>
         </div>
         
-        <Cart SessionId={sessionId}></Cart>
+        <Cart/>
       </div>
       
       {/* Render the filtered products below the header */}

@@ -2,8 +2,7 @@
 import { ProductDescription } from '@/components/component/product-description';
 import { getProduct } from '@/app/actions';
 import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
-import { cookies } from 'next/headers';
-export default async function Page({ params }: { params: Params }) {
+export default async function Page({ params }: { params: Params}) {
 
     const product = await getProduct(params.id);
     const details = {
@@ -17,22 +16,12 @@ export default async function Page({ params }: { params: Params }) {
       stock: product?.stock ?? '',
       anime: product?.anime ?? '',
     };
-    
-    const cookieStore = cookies()
-  const posthogCookie = cookieStore.get('ph_phc_JHXDEpCWQRLpHDZe6tMJdo4lVl62hy1P8n13cvMcqDU_posthog');
-
-if (posthogCookie && posthogCookie.value) {
-  // Step 2: Parse the JSON string
-  const posthogData = JSON.parse(posthogCookie.value);
-
-  // Step 3: Access the session ID from the `$sesid` array
-  const sessionId = posthogData?.$sesid?.[1];  
-    return (
+        return (
     
     <div className='flex flex-col justify-center h-[90vh]'>
-        <ProductDescription product={details}  sessionId={sessionId}/>
+        <ProductDescription product={details}/>
     </div>
     
 )
-}
+
   }

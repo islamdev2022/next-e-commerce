@@ -10,8 +10,21 @@ import { getProduct } from "@/app/actions"
 import { useToast } from "@/components/ui/use-toast"
 import Link from "next/link"
 import Image from "next/image"
-export function Cart({SessionId}: {SessionId: string}) {
+import { v4 as uuidv4 } from 'uuid';
+export function Cart() {
+  const [SessionId, setSessionId] = useState("");
 
+  useEffect(() => {
+    // This will run only on the client side
+    const storedSessionId = localStorage.getItem('sessionId');
+    if (storedSessionId) {
+      setSessionId(storedSessionId);
+    } else {
+      const newSessionId = uuidv4();
+      setSessionId(newSessionId);
+      localStorage.setItem('sessionId', newSessionId);
+    }
+  }, []); 
   const [cartItem, setCartItem] = useState<{ id: number; cartId: number; productId: number; quantity: number; }[]>([]);
   const [cartId, setCartId] = useState(0);
   const { toast } = useToast()

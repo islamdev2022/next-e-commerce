@@ -9,8 +9,21 @@ import { useToast } from "@/components/ui/use-toast"
 import ProductNotFound from "@/components/component/product-not-found"
 import Header from "../Header"
 import Image from "next/image"
-export function ProductDescription ({ product,sessionId }: { product: { id: number, picture1: string, picture2: string, picture3: string ,  title: string, description: string, price: number, anime:string } ;sessionId: string }) {
+import { v4 as uuidv4 } from 'uuid';
+export function ProductDescription ({ product }: { product: { id: number, picture1: string, picture2: string, picture3: string ,  title: string, description: string, price: number, anime:string }}) {
+  const [SessionId, setSessionId] = useState("");
 
+  useEffect(() => {
+    // This will run only on the client side
+    const storedSessionId = localStorage.getItem('sessionId');
+    if (storedSessionId) {
+      setSessionId(storedSessionId);
+    } else {
+      const newSessionId = uuidv4();
+      setSessionId(newSessionId);
+      localStorage.setItem('sessionId', newSessionId);
+    }
+  }, []); 
   const [cartId, setCartId] = useState(0);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [loading, setLoading] = useState(false); // Loading state
@@ -24,7 +37,7 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
     // Fetch cart data when the component mounts
     const fetchCart = async () => {
       try {
-        const cart1 = await getCart(sessionId);
+        const cart1 = await getCart(SessionId);
         if (cart1 && cart1.length > 0) {
           const cartId = cart1[0].id;
           setCartId(cartId);
@@ -35,7 +48,7 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
     };
 
     fetchCart();
-  }, [sessionId]);
+  }, [SessionId]);
 
   const handleCreate = async () => {
     setLoading(true)
@@ -75,7 +88,7 @@ export function ProductDescription ({ product,sessionId }: { product: { id: numb
   }
   return (
     <div className="flex flex-col h-full">
-      <Header sessionId={sessionId} />
+      <Header />
       <div className="max-w-6xl px-4 mx-auto py-6 space-y-8 flex justify-center items-center h-screen ">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-12 items-start">
           <div className="grid gap-4 md:gap-8">

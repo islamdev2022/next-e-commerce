@@ -37,13 +37,27 @@ import wilayas from '@/wilayas.json';
 import { useToast } from "../ui/use-toast";
 import { getCart } from "@/app/actions";
 import { useRouter } from "next/navigation";
-export function Checkout({SessionId}: {SessionId: string}) {
+import { v4 as uuidv4 } from 'uuid';
+export function Checkout() {
   interface Product {
     id: string;
     name: string;
     price: number;
     quantity: number;
   }
+  const [SessionId, setSessionId] = useState("");
+
+  useEffect(() => {
+    // This will run only on the client side
+    const storedSessionId = localStorage.getItem('sessionId');
+    if (storedSessionId) {
+      setSessionId(storedSessionId);
+    } else {
+      const newSessionId = uuidv4();
+      setSessionId(newSessionId);
+      localStorage.setItem('sessionId', newSessionId);
+    }
+  }, []); 
 const router = useRouter();
 const [seconds, setSeconds] = useState<number>(2); // State for countdown
   const [showMessage, setShowMessage] = useState<boolean>(false); // State for showing the redirection message
