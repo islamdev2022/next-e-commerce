@@ -1,3 +1,12 @@
+It's an e-commerce website that sells anime figures, built with Next.js 14 and Tailwind CSS. I used shadcn as component library with v0.dev ,  The backend is powered by MySQL with Prisma ORM, and the database is hosted on Railway, while images are stored on Cloudinary.
+
+The website features a secure dashboard panel for admins, protected by authentication using NextAuth. This dashboard allows admins to view all products along with their stock and prices, add new products, modify stock levels, and manage orders by changing their states (PENDING, COMPLETED, CANCELED). Admins can also access detailed client information for each order.
+
+Users can search for products by anime names or character names and view detailed information about each product. The cart functionality is robust, retaining items even if the user closes or refreshes the page, thanks to cart details and items being stored in the database. Users can order multiple items with different quantities at the same time, fill out a shipping form, and choose their Wilaya and Commune.
+
+Additionally, I created API routes to handle all backend operations seamlessly, enabling dynamic interactions between the frontend and backend. Working on this project helped me gain a deeper understanding of backend development, including authentication, data management, and building a scalable application architecture.
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
